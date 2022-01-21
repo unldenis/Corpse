@@ -1,0 +1,9 @@
+name: Corpse
+version: 1.0-SNAPSHOT
+api-version: "1.13"
+depend: [ProtocolLib]
+author: unldenis
+main: com.github.unldenis.corpse.CorpseP
+commands:
+  spawncorpse:
+  removecorpse:

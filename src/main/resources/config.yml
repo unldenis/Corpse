@@ -1,0 +1,14 @@
+## Set in seconds how long the corpse lasts. (-1 or lower for forever.)
+corpse-time: 10
+
+## Sets if corpses spawn on death. (true or false)
+on-death: true
+
+## Show name tags on corpses. (true or false)
+show-tags: false
+
+## Should we render player armor and items on the corpses?
+render-armor: true
+
+## Maximum distance for rendering corps
+corpse-distance: 60
