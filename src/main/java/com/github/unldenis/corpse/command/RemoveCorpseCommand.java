@@ -30,24 +30,25 @@ public class RemoveCorpseCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player) {
             Player player = (Player) sender;
-            if(args.length==1) {
-                try {
-                    double radius = Math.pow(Double.parseDouble(args[0]), 2);
+            if(player.hasPermission("corpses.remove")) {
+                if(args.length==1) {
+                    try {
+                        double radius = Math.pow(Double.parseDouble(args[0]), 2);
 
-                    CorpsePool pool = CorpsePool.getInstance();
-                    pool.getCorpses()
-                            .stream()
-                            .filter(corpse -> corpse.getLocation().distanceSquared(player.getLocation()) <= radius)
-                            .forEach(corpse -> pool.remove(corpse.getId()));
-                    player.sendMessage(ChatColor.GREEN+"Corpses deleted");
+                        CorpsePool pool = CorpsePool.getInstance();
+                        pool.getCorpses()
+                                .stream()
+                                .filter(corpse -> corpse.getLocation().distanceSquared(player.getLocation()) <= radius)
+                                .forEach(corpse -> pool.remove(corpse.getId()));
+                        player.sendMessage(ChatColor.GREEN+"Corpses deleted");
+                        return true;
+                    }catch (NumberFormatException e) {
+                        player.sendMessage(ChatColor.RED + "Radius must be a number");
+                    }
                     return true;
-                }catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Radius must be a number");
                 }
-                return true;
+                sender.sendMessage(ChatColor.RED+"/removecorpse [radius] - Removes any coprse(s) in a radius of you.");
             }
-            sender.sendMessage(ChatColor.RED+"/removecorpse [radius] - Removes any coprse(s) in a radius of you.");
-
         } else {
             sender.sendMessage(ChatColor.RED+"Only players can run this command");
         }
