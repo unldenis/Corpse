@@ -193,6 +193,11 @@ public class Corpse {
     }
 
     @NotNull
+    public String getName() {
+        return name;
+    }
+
+    @NotNull
     public Location getLocation() {
         return location;
     }

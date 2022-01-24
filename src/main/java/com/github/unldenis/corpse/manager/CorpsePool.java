@@ -100,6 +100,14 @@ public class CorpsePool implements Listener {
         return Optional.ofNullable(this.corpseMap.get(entityId));
     }
 
+    @NotNull
+    public Optional<Corpse> getCorpse(String name) {
+        return this.getCorpses()
+                .stream()
+                .filter(corpse -> corpse.getName().equals(name))
+                .findFirst();
+    }
+
     public void remove(int entityId) {
         this.getCorpse(entityId).ifPresent(corpse -> {
             this.corpseMap.remove(entityId);
@@ -124,6 +132,14 @@ public class CorpsePool implements Listener {
     }
 
     public void takeCareOf(@NotNull Corpse corpse) {
+        // Prevent two corpses with same name and showTags is enabled
+        if(this.showTags) {
+            this.getCorpse(corpse.getName()).ifPresent(c -> {
+                this.corpseMap.remove(c.getId());
+                c.getSeeingPlayers()
+                        .forEach(c::hide);
+            });
+        }
         this.corpseMap.put(corpse.getId(), corpse);
     }
 

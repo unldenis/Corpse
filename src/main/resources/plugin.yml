@@ -1,5 +1,5 @@
-name: Corpse
-version: 1.0-SNAPSHOT
+name: ${project.artifactId}
+version: ${project.version}
 api-version: "1.13"
 depend: [ProtocolLib]
 author: unldenis

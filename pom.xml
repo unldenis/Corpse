@@ -6,7 +6,7 @@
 
     <groupId>com.github.unldenis.corpse</groupId>
     <artifactId>Corpse</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -55,4 +55,17 @@
         </dependency>
         -->
     </dependencies>
+
+    <build>
+        <!-- The jarname on build. -->
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <!-- Replace all the ${} markers for all files in the supplied dir.. -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+    </build>
 </project>
