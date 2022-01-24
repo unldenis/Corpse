@@ -28,9 +28,4 @@ public interface IPacket {
     @Nullable
     PacketContainer get();
 
-    @NotNull
-    default PacketContainer[] getMore() {
-        return new PacketContainer[] { get() };
-    }
-
 }

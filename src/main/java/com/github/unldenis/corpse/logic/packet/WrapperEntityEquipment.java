@@ -87,9 +87,7 @@ public class WrapperEntityEquipment implements IPacket {
         return null;
     }
 
-
     @NotNull
-    @Override
     public PacketContainer[] getMore() {
         return this.packetContainers;
     }
