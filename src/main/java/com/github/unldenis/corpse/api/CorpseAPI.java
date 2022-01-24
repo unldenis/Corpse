@@ -20,6 +20,7 @@ package com.github.unldenis.corpse.api;
 
 import com.comphenix.protocol.wrappers.*;
 import com.github.unldenis.corpse.logic.*;
+import com.github.unldenis.corpse.manager.*;
 import org.apache.commons.lang.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -32,25 +33,25 @@ public class CorpseAPI {
 
     private CorpseAPI() {}
 
-    public void spawnCorpse(@NotNull Player player) {
+    public Corpse spawnCorpse(@NotNull Player player) {
         Validate.notNull(player, "Player cannot be null");
-        new Corpse(player);
+        return new Corpse(player);
     }
 
-    public void spawnCorpse(@NotNull Player player, @NotNull Location location) {
+    public Corpse spawnCorpse(@NotNull Player player, @NotNull Location location) {
         Validate.notNull(player, "Player cannot be null");
         Validate.notNull(location, "Spawn location cannot be null");
-        new Corpse(location, WrappedGameProfile.fromPlayer(player), null, player.getName());
+        return new Corpse(location, WrappedGameProfile.fromPlayer(player), null, player.getName());
     }
 
 
-    public void spawnCorpse(@NotNull OfflinePlayer offlinePlayer, @NotNull Location location) {
+    public Corpse spawnCorpse(@NotNull OfflinePlayer offlinePlayer, @NotNull Location location) {
         Validate.notNull(offlinePlayer, "OfflinePlayer cannot be null");
         Validate.notNull(location, "Spawn location cannot be null");
-        new Corpse(location, offlinePlayer, null);
+        return new Corpse(location, offlinePlayer, null);
     }
 
-    public void spawnCorpse(
+    public Corpse spawnCorpse(
             @NotNull Player player,
             @NotNull Location location,
             @Nullable ItemStack helmet,
@@ -60,10 +61,10 @@ public class CorpseAPI {
     ) {
         Validate.notNull(player, "Player cannot be null");
         Validate.notNull(location, "Spawn location cannot be null");
-        new Corpse(location, WrappedGameProfile.fromPlayer(player), new ItemStack[]{boots, leggings, chestPlate, helmet}, player.getName());
+        return new Corpse(location, WrappedGameProfile.fromPlayer(player), new ItemStack[]{boots, leggings, chestPlate, helmet}, player.getName());
     }
 
-    public void spawnCorpse(
+    public Corpse spawnCorpse(
             @NotNull OfflinePlayer offlinePlayer,
             @NotNull Location location,
             @Nullable ItemStack helmet,
@@ -73,7 +74,12 @@ public class CorpseAPI {
     ) {
         Validate.notNull(offlinePlayer, "OfflinePlayer cannot be null");
         Validate.notNull(location, "Spawn location cannot be null");
-        new Corpse(location, offlinePlayer, new ItemStack[]{boots, leggings, chestPlate, helmet});
+        return new Corpse(location, offlinePlayer, new ItemStack[]{boots, leggings, chestPlate, helmet});
+    }
+
+    public void removeCorpse(@NotNull Corpse corpse) {
+        Validate.notNull(corpse, "Corpse cannot be null");
+        CorpsePool.getInstance().remove(corpse.getId());
     }
 
     @NotNull
