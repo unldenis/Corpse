@@ -49,12 +49,9 @@ public class WrapperEntityMetadata implements  IPacket {
             WrappedDataWatcher.WrappedDataWatcherObject bed = new WrappedDataWatcher.WrappedDataWatcherObject(14, WrappedDataWatcher.Registry.getBlockPositionSerializer(true));
             watcher.setObject(bed, Optional.of(BlockPosition.getConverter().getGeneric(new BlockPosition(corpse.location.toVector()))));
              */
-            WrappedDataWatcher.WrappedDataWatcherObject skinLayers;
-            if(VersionUtil.isAbove(VersionUtil.VersionEnum.V1_17)) {
-                skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class));
-            } else {
-                skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(16, WrappedDataWatcher.Registry.get(Byte.class));
-            }
+
+            int indexSkinLayer = VersionUtil.isAbove(VersionUtil.VersionEnum.V1_17) ? 17 : 16;
+            WrappedDataWatcher.WrappedDataWatcherObject skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(indexSkinLayer, WrappedDataWatcher.Registry.get(Byte.class));
             watcher.setObject(skinLayers, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
         } else {
             //tested 1.8.8
