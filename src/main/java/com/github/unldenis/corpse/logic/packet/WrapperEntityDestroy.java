@@ -37,12 +37,11 @@ public class WrapperEntityDestroy implements IPacket {
     @Override
     public void load() {
         packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        if(VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_8)) {
+        if(VersionUtil.isBelow(VersionUtil.VersionEnum.V1_16)) {
             packet.getIntegerArrays().write(0, new int[] { this.id });
         }else{
             packet.getIntLists().write(0, Collections.singletonList(this.id));
         }
-
     }
 
     @Override
