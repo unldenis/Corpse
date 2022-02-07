@@ -70,17 +70,8 @@ public class Corpse {
         this.name = name == null ? ProfileUtils.randomName() : name;
         this.location = location;
         this.profile = new WrappedGameProfile(this.uuid, this.name);
-
-        /*
-            In the tested version (1.8.8) the google MultiMap class is not present, compared
-            to 1.18.1 where I have not found any errors.
-            At the moment version 1.8 corpses do not have a skin
-         */
-        if(!VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_8)) {
-            wrappedGameProfile.getProperties().forEach((s, p) -> {
-                profile.getProperties().put(s, p);
-            });
-        }
+        //set skin to profile WrappedGameProfile
+        wrappedGameProfile.getProperties().get("textures").forEach(property -> profile.getProperties().put("textures", property));
 
         if(pool.isRenderArmor() && armorContents != null) {
             this.armorContents = armorContents.clone();
