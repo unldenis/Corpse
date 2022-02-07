@@ -27,11 +27,7 @@ import java.util.concurrent.*;
 
 public class PacketLoader {
 
-    private final Corpse corpse;
-
-
     private final Collection<IPacket> packets = new CopyOnWriteArraySet<>();
-
     private final WrapperEntityDestroy wrapperEntityDestroy;
     private final WrapperEntityEquipment wrapperEntityEquipment;
     private final WrapperEntityMetadata wrapperEntityMetadata;
@@ -40,8 +36,6 @@ public class PacketLoader {
     private final WrapperPlayerInfo wrapperPlayerInfoRemove;
 
     public PacketLoader(@NotNull Corpse corpse) {
-        this.corpse = corpse;
-
         //init packets
         this.wrapperEntityDestroy = new WrapperEntityDestroy(corpse.id);
         this.wrapperEntityEquipment = new WrapperEntityEquipment(corpse.id, corpse.armorContents);
@@ -59,10 +53,8 @@ public class PacketLoader {
         packets.add(wrapperNamedEntitySpawn);
         packets.add(wrapperPlayerInfoAdd);
         packets.add(wrapperPlayerInfoRemove);
-
         this.packets.forEach(IPacket::load);
     }
-
 
     public WrapperEntityDestroy getWrapperEntityDestroy() {
         return wrapperEntityDestroy;

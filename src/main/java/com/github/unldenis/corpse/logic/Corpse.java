@@ -120,8 +120,7 @@ public class Corpse {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
             }
-
-            Bukkit.getScheduler().runTaskLater(CorpseP.getInstance(), ()->{
+            Bukkit.getScheduler().runTaskLaterAsynchronously(CorpseP.getInstance(), ()->{
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperPlayerInfoRemove().get());
                 } catch (InvocationTargetException e) {
@@ -146,7 +145,6 @@ public class Corpse {
         }
         this.seeingPlayers.remove(player);
     }
-
 
     public boolean isShownFor(@NotNull Player player) {
         return this.seeingPlayers.contains(player);

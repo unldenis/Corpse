@@ -6,7 +6,7 @@
 
     <groupId>com.github.unldenis.corpse</groupId>
     <artifactId>Corpse</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -46,14 +46,6 @@
             <version>20.1.0</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.google.guava/guava
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
-        </dependency>
-        -->
     </dependencies>
 
     <build>

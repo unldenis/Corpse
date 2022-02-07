@@ -19,6 +19,7 @@
 package com.github.unldenis.corpse.command;
 
 
+import com.github.unldenis.corpse.api.*;
 import com.github.unldenis.corpse.logic.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
@@ -38,7 +39,11 @@ public class SpawnCorpseCommand implements CommandExecutor {
                     return true;
                 }else if(args.length==1) {
                     OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
-                    new Corpse(player.getLocation(), target, null);
+                    if(target.isOnline()) {
+                        CorpseAPI.getInstance().spawnCorpse((Player) target, player.getLocation());
+                    } else {
+                        new Corpse(player.getLocation(), target, null);
+                    }
                     player.sendMessage(ChatColor.GREEN+"Corpse created");
                     return true;
                 }

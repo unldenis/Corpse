@@ -35,6 +35,8 @@ public class CorpseAPI {
         throw new IllegalArgumentException();
     }
 
+    private CorpseAPI(Object dummy) { }
+
     /**
      * Method that creates a corpse in the player's position and with its skin and inventory
      * @param player The player to copy
@@ -133,7 +135,7 @@ public class CorpseAPI {
     @NotNull
     public static synchronized CorpseAPI getInstance() {
         if(instance == null) {
-            instance = new CorpseAPI();
+            instance = new CorpseAPI(null);
         }
         return instance;
     }
