@@ -85,4 +85,4 @@ public class CorpseAPI {
     @NotNull
     public static synchronized CorpseAPI getInstance();
 }
-```java
+```
