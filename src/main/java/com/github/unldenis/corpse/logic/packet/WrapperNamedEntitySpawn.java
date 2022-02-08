@@ -43,7 +43,13 @@ public class WrapperNamedEntitySpawn implements IPacket {
 
     @Override
     public void load() {
-        packet = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+        packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+
+        /*
+            Unknown reason
+            1.12.2 client packet error caused by this
+            packet = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+        */
 
         if(VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_8)) {
             packet.getModifier().writeDefaults();

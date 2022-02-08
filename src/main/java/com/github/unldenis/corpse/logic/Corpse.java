@@ -114,12 +114,23 @@ public class Corpse {
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperPlayerInfoAdd().get());
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperNamedEntitySpawn().get());
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityMetadata().get());
+
+            // Set sleep
+            if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityMetadata().get());
+            } else {
+                player.sendBlockChange(BedUtil.getBedLocation(location), Material.valueOf("BED_BLOCK"), (byte) BedUtil.yawToFacing(location.getYaw()));
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperBed().get());
+                // Set the correct height of the player lying down
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityTeleport().get());
+            }
+
             if(armor) {
                 for(PacketContainer packet: this.packetLoader.getWrapperEntityEquipment().getMore()) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
             }
+
             Bukkit.getScheduler().runTaskLaterAsynchronously(CorpseP.getInstance(), ()->{
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperPlayerInfoRemove().get());
