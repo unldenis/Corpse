@@ -114,11 +114,9 @@ public class Corpse {
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperPlayerInfoAdd().get());
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperNamedEntitySpawn().get());
-
             // Set sleep
-            if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityMetadata().get());
-            } else {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityMetadata().get());
+            if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_12)) {
                 player.sendBlockChange(BedUtil.getBedLocation(location), Material.valueOf("BED_BLOCK"), (byte) BedUtil.yawToFacing(location.getYaw()));
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperBed().get());
                 // Set the correct height of the player lying down
