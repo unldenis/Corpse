@@ -19,6 +19,7 @@
 package com.github.unldenis.corpse.logic;
 
 import com.github.unldenis.corpse.logic.packet.*;
+import com.github.unldenis.corpse.util.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -57,8 +58,12 @@ public class PacketLoader {
         packets.add(wrapperNamedEntitySpawn);
         packets.add(wrapperPlayerInfoAdd);
         packets.add(wrapperPlayerInfoRemove);
-        packets.add(wrapperBed);
-        packets.add(wrapperEntityTeleport);
+
+        //Fix 'Caused by: java.lang.IllegalArgumentException: Could not find packet for type BED' for last versions
+        if(VersionUtil.isBelow(VersionUtil.VersionEnum.V1_12)) {
+            packets.add(wrapperBed);
+            packets.add(wrapperEntityTeleport);
+        }
         this.packets.forEach(IPacket::load);
     }
 
