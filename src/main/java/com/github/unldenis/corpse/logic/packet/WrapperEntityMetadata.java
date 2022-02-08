@@ -23,7 +23,7 @@ import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.wrappers.*;
 import com.github.unldenis.corpse.util.*;
 
-public class WrapperEntityMetadata implements  IPacket {
+public class WrapperEntityMetadata implements IPacket {
 
     private PacketContainer packet;
     private final int id;
@@ -34,13 +34,10 @@ public class WrapperEntityMetadata implements  IPacket {
 
     @Override
     public void load() {
-
-        packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getIntegers().write(0, this.id);
-
-        WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-        if(VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
+        if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
+            packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            packet.getIntegers().write(0, this.id);
+            WrappedDataWatcher watcher = new WrappedDataWatcher();
             WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(6, WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()));
             watcher.setObject(visible, EnumWrappers.EntityPose.SLEEPING.toNms());
             /*
@@ -51,13 +48,8 @@ public class WrapperEntityMetadata implements  IPacket {
             int indexSkinLayer = VersionUtil.isAbove(VersionUtil.VersionEnum.V1_17) ? 17 : 16;
             WrappedDataWatcher.WrappedDataWatcherObject skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(indexSkinLayer, WrappedDataWatcher.Registry.get(Byte.class));
             watcher.setObject(skinLayers, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
-        } else {
-            //tested 1.8.8
-            watcher.setObject(10, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
+            packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
         }
-
-        packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
-
     }
 
     @Override
