@@ -1,5 +1,5 @@
 # Corpse
-[![](https://jitpack.io/v/unldenis/Corpse.svg)](https://jitpack.io/#unldenis/Corpse)
+[![](https://jitpack.io/v/unldenis/Corpse.svg)](https://jitpack.io/#unldenis/Corpse)<br>
 Dead bodies in minecraft for 1.8-1.18 servers.
 ## Installation
 1. Put the jar in the plugins folder.
