@@ -111,44 +111,32 @@ public class Corpse {
         if(!this.pool.isShowTags()) {
             hideNameTag(player);
         }
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperPlayerInfoAdd().get());
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperNamedEntitySpawn().get());
-            // Set sleep
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityMetadata().get());
-            if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_12)) {
-                player.sendBlockChange(BedUtil.getBedLocation(location), Material.valueOf("BED_BLOCK"), (byte) BedUtil.yawToFacing(location.getYaw()));
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperBed().get());
-                // Set the correct height of the player lying down
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityTeleport().get());
-            }
+        sendPackets(player,
+                this.packetLoader.getWrapperPlayerInfoAdd().get(),
+                this.packetLoader.getWrapperNamedEntitySpawn().get(),
+                this.packetLoader.getWrapperEntityMetadata().get()); // Set sleep
 
-            if(armor) {
-                for(PacketContainer packet: this.packetLoader.getWrapperEntityEquipment().getMore()) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
-            }
-
-            Bukkit.getScheduler().runTaskLaterAsynchronously(CorpseP.getInstance(), ()->{
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperPlayerInfoRemove().get());
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }, 2L);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_12)) {
+            player.sendBlockChange(BedUtil.getBedLocation(location), Material.valueOf("BED_BLOCK"), (byte) BedUtil.yawToFacing(location.getYaw()));
+            sendPackets(player,
+                    this.packetLoader.getWrapperBed().get(),
+                    this.packetLoader.getWrapperEntityTeleport().get());  // Set the correct height of the player lying down
         }
+
+        if(armor) {
+            sendPackets(player, this.packetLoader.getWrapperEntityEquipment().getMore());
+        }
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                CorpseP.getInstance(),
+                () -> sendPackets(player, this.packetLoader.getWrapperPlayerInfoRemove().get()),
+                2L);
 
     }
 
     @ApiStatus.Internal
     public void hide(@NotNull Player player) {
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, this.packetLoader.getWrapperEntityDestroy().get());
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        sendPackets(player, this.packetLoader.getWrapperEntityDestroy().get());
         if(!this.pool.isShowTags()) {
             showNameTag(player);
         }
@@ -184,6 +172,16 @@ public class Corpse {
                 .stream()
                 .filter(team -> team.getName().equals(Corpse.TEAM_NAME))
                 .forEach(team -> team.removeEntry(this.name));
+    }
+
+    private void sendPackets(Player player, PacketContainer... packets) {
+        for(PacketContainer packet: packets) {
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public int getId() {

@@ -64,9 +64,10 @@ public class VersionUtil {
         V1_15(8),
         V1_16(9),
         V1_17(10),
-        V1_18(11);
+        V1_18(11),
+        V1_19(12);
 
-        private int order;
+        private final int order;
 
         VersionEnum(int order) {
             this.order = order;

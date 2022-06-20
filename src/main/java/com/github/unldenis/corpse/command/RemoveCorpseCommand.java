@@ -24,6 +24,8 @@ import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.*;
 
+import java.util.concurrent.atomic.*;
+
 public class RemoveCorpseCommand implements CommandExecutor {
 
     @Override
@@ -36,11 +38,15 @@ public class RemoveCorpseCommand implements CommandExecutor {
                         double radius = Math.pow(Double.parseDouble(args[0]), 2);
 
                         CorpsePool pool = CorpsePool.getInstance();
+                        AtomicInteger count = new AtomicInteger(0);
                         pool.getCorpses()
                                 .stream()
                                 .filter(corpse -> corpse.getLocation().distanceSquared(player.getLocation()) <= radius)
-                                .forEach(corpse -> pool.remove(corpse.getId()));
-                        player.sendMessage(ChatColor.GREEN+"Corpses deleted");
+                                .forEach(corpse -> {
+                                    pool.remove(corpse.getId());
+                                    count.incrementAndGet();
+                                });
+                        player.sendMessage("(" + count.get() + ") " + ChatColor.GREEN+"Corpses deleted");
                         return true;
                     }catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.RED + "Radius must be a number");
