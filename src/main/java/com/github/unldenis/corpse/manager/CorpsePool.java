@@ -75,8 +75,10 @@ public class CorpsePool implements Listener {
                     Location playerLoc = player.getLocation();
                     boolean isShown = corpse.isShownFor(player);
 
-                    if (!holoLoc.getWorld().equals(playerLoc.getWorld()) && isShown) {
-                        corpse.hide(player);
+                    if (!holoLoc.getWorld().equals(playerLoc.getWorld())) {
+                        if(isShown) {
+                            corpse.hide(player);
+                        }
                         continue;
                     } else if (!holoLoc.getWorld()
                             .isChunkLoaded(holoLoc.getBlockX() >> 4, holoLoc.getBlockZ() >> 4) && isShown) {
