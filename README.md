@@ -20,7 +20,6 @@ public class CorpseAPI {
   /**
    * Method that creates a corpse in the player's position and with its skin and inventory
    *
-   * @param player The player to copy
    * @return a new Corpse object
    */
   public Corpse spawnCorpse(@NotNull Player player);
@@ -29,7 +28,6 @@ public class CorpseAPI {
    * Method that creates a corpse in the given place and with the skin, name and inventory of the
    * player
    *
-   * @param player   The player to copy
    * @param location The location where to spawn the corpse
    * @return a new Corpse object
    */
@@ -39,7 +37,6 @@ public class CorpseAPI {
    * Method that creates a corpse in the given place and with the skin and name of the
    * offlinePlayer
    *
-   * @param offlinePlayer The offlinePlayer to copy
    * @param location      The location where to spawn the corpse
    * @return a new Corpse object
    */
@@ -49,7 +46,6 @@ public class CorpseAPI {
    * Method that creates a corpse in the given place and with the skin and name of the player with a
    * custom inventory.
    *
-   * @param player     The player to copy
    * @param location   The location where to spawn the corpse
    * @param helmet     The helmet to put on the corpse
    * @param chestPlate The chestPlate to put on the corpse
@@ -70,7 +66,6 @@ public class CorpseAPI {
    * Method that creates a corpse in the given place and with the skin and name of the offlinePlayer
    * with a custom inventory.
    *
-   * @param offlinePlayer The offlinePlayer to copy
    * @param location      The location where to spawn the corpse
    * @param helmet        The helmet to put on the corpse
    * @param chestPlate    The chestPlate to put on the corpse
