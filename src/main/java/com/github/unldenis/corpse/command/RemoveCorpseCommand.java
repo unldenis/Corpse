@@ -28,38 +28,40 @@ import java.util.concurrent.atomic.*;
 
 public class RemoveCorpseCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
-            Player player = (Player) sender;
-            if(player.hasPermission("corpses.remove")) {
-                if(args.length==1) {
-                    try {
-                        double radius = Math.pow(Double.parseDouble(args[0]), 2);
+  @Override
+  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
+      @NotNull String label, @NotNull String[] args) {
+    if (sender instanceof Player) {
+      Player player = (Player) sender;
+      if (player.hasPermission("corpses.remove")) {
+        if (args.length == 1) {
+          try {
+            double radius = Math.pow(Double.parseDouble(args[0]), 2);
 
-                        CorpsePool pool = CorpsePool.getInstance();
-                        AtomicInteger count = new AtomicInteger(0);
-                        pool.getCorpses()
-                                .stream()
-                                .filter(corpse -> corpse.getLocation().distanceSquared(player.getLocation()) <= radius)
-                                .forEach(corpse -> {
-                                    pool.remove(corpse.getId());
-                                    count.incrementAndGet();
-                                });
-                        player.sendMessage("(" + count.get() + ") " + ChatColor.GREEN+"Corpses deleted");
-                        return true;
-                    }catch (NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + "Radius must be a number");
-                    }
-                    return true;
-                }
-                sender.sendMessage(ChatColor.RED+"/removecorpse [radius] - Removes any coprse(s) in a radius of you.");
-            }
-        } else {
-            sender.sendMessage(ChatColor.RED+"Only players can run this command");
+            CorpsePool pool = CorpsePool.getInstance();
+            AtomicInteger count = new AtomicInteger(0);
+            pool.getCorpses()
+                .stream()
+                .filter(
+                    corpse -> corpse.getLocation().distanceSquared(player.getLocation()) <= radius)
+                .forEach(corpse -> {
+                  pool.remove(corpse.getId());
+                  count.incrementAndGet();
+                });
+            player.sendMessage("(" + count.get() + ") " + ChatColor.GREEN + "Corpses deleted");
+            return true;
+          } catch (NumberFormatException e) {
+            player.sendMessage(ChatColor.RED + "Radius must be a number");
+          }
+          return true;
         }
-
-
-        return false;
+        sender.sendMessage(
+            ChatColor.RED + "/removecorpse [radius] - Removes any coprse(s) in a radius of you.");
+      }
+    } else {
+      sender.sendMessage(ChatColor.RED + "Only players can run this command");
     }
+
+    return false;
+  }
 }

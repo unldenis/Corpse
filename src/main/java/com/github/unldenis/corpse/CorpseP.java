@@ -30,44 +30,45 @@ import org.jetbrains.annotations.*;
 
 public class CorpseP extends JavaPlugin {
 
-    private static CorpseP instance;
+  private static CorpseP instance;
 
-    private DataManager configYml;
-    private CorpsePool pool;
-    @Override
-    public void onEnable() {
-        CorpseP.instance = this;
+  private DataManager configYml;
+  private CorpsePool pool;
 
-        //register commands
-        this.getCommand("spawncorpse").setExecutor(new SpawnCorpseCommand());
-        this.getCommand("removecorpse").setExecutor(new RemoveCorpseCommand());
+  @NotNull
+  public static CorpseP getInstance() {
+    return instance;
+  }
 
-        //load config
-        configYml = new DataManager(this, "config.yml");
+  @Override
+  public void onEnable() {
+    CorpseP.instance = this;
 
-        //load instance
-        pool = CorpsePool.getInstance();
+    //register commands
+    this.getCommand("spawncorpse").setExecutor(new SpawnCorpseCommand());
+    this.getCommand("removecorpse").setExecutor(new RemoveCorpseCommand());
+
+    //load config
+    configYml = new DataManager(this, "config.yml");
+
+    //load instance
+    pool = CorpsePool.getInstance();
+  }
+
+  @Override
+  public void onDisable() {
+    BukkitTask task = pool.getTickTask();
+    if (task != null) {
+      task.cancel();
     }
-
-    @Override
-    public void onDisable() {
-        BukkitTask task = pool.getTickTask();
-        if(task != null) {
-            task.cancel();
-        }
-        for(Corpse c: pool.getCorpses()) {
-            c.getSeeingPlayers()
-                    .forEach(c::hide);
-        }
+    for (Corpse c : pool.getCorpses()) {
+      c.getSeeingPlayers()
+          .forEach(c::hide);
     }
+  }
 
-    @NotNull
-    public static CorpseP getInstance() {
-        return instance;
-    }
-
-    @NotNull
-    public FileConfiguration getConfigYml() {
-        return configYml.getConfig();
-    }
+  @NotNull
+  public FileConfiguration getConfigYml() {
+    return configYml.getConfig();
+  }
 }

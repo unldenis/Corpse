@@ -23,9 +23,9 @@ import org.jetbrains.annotations.*;
 
 public interface IPacket {
 
-    void load();
+  void load();
 
-    @Nullable
-    PacketContainer get();
+  @Nullable
+  PacketContainer get();
 
 }

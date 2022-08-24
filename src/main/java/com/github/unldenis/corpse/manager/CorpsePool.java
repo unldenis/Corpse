@@ -35,165 +35,164 @@ import java.util.concurrent.*;
 
 public class CorpsePool implements Listener {
 
-    private static CorpsePool instance;
+  private static final Random RANDOM = new Random();
+  private static CorpsePool instance;
+  private final CorpseP plugin;
 
-    private static final Random RANDOM = new Random();
-    private final CorpseP plugin;
-
-    //config options
-    private final double spawnDistance;
-    private final int timeRemove;
-    private final boolean onDeath;
-    private final boolean showTags;
-    private final boolean renderArmor;
+  //config options
+  private final double spawnDistance;
+  private final int timeRemove;
+  private final boolean onDeath;
+  private final boolean showTags;
+  private final boolean renderArmor;
 
 
-    private final Map<Integer, Corpse> corpseMap = new ConcurrentHashMap<>();
+  private final Map<Integer, Corpse> corpseMap = new ConcurrentHashMap<>();
 
-    private BukkitTask tickTask;
+  private BukkitTask tickTask;
 
-    @ApiStatus.Internal
-    private CorpsePool() {
-        this.plugin = CorpseP.getInstance();
+  @ApiStatus.Internal
+  private CorpsePool() {
+    this.plugin = CorpseP.getInstance();
 
-        FileConfiguration config = plugin.getConfigYml();
-        this.spawnDistance = Math.pow(config.getInt("corpse-distance"), 2);
-        this.timeRemove = config.getInt("corpse-time");
-        this.onDeath = config.getBoolean("on-death");
-        this.showTags = config.getBoolean("show-tags");
-        this.renderArmor = config.getBoolean("render-armor");
+    FileConfiguration config = plugin.getConfigYml();
+    this.spawnDistance = Math.pow(config.getInt("corpse-distance"), 2);
+    this.timeRemove = config.getInt("corpse-time");
+    this.onDeath = config.getBoolean("on-death");
+    this.showTags = config.getBoolean("show-tags");
+    this.renderArmor = config.getBoolean("render-armor");
 
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-        this.corpseTick();
+    Bukkit.getPluginManager().registerEvents(this, plugin);
+    this.corpseTick();
+  }
+
+  @NotNull
+  public static synchronized CorpsePool getInstance() {
+    if (instance == null) {
+      instance = new CorpsePool();
     }
+    return instance;
+  }
 
-    private void corpseTick() {
-        tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
-            for (Player player : ImmutableList.copyOf(Bukkit.getOnlinePlayers())) {
-                for (Corpse corpse : this.corpseMap.values()) {
-                    Location holoLoc = corpse.getLocation();
-                    Location playerLoc = player.getLocation();
-                    boolean isShown = corpse.isShownFor(player);
+  private void corpseTick() {
+    tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
+      for (Player player : ImmutableList.copyOf(Bukkit.getOnlinePlayers())) {
+        for (Corpse corpse : this.corpseMap.values()) {
+          Location holoLoc = corpse.getLocation();
+          Location playerLoc = player.getLocation();
+          boolean isShown = corpse.isShownFor(player);
 
-                    if (!holoLoc.getWorld().equals(playerLoc.getWorld())) {
-                        if(isShown) {
-                            corpse.hide(player);
-                        }
-                        continue;
-                    } else if (!holoLoc.getWorld()
-                            .isChunkLoaded(holoLoc.getBlockX() >> 4, holoLoc.getBlockZ() >> 4) && isShown) {
-                        corpse.hide(player);
-                        continue;
-                    }
-                    boolean inRange = holoLoc.distanceSquared(playerLoc) <= this.spawnDistance;
-
-                    if (!inRange && isShown) {
-                        corpse.hide(player);
-                    } else if (inRange && !isShown) {
-                        corpse.show(player);
-                    }
-                }
+          if (!holoLoc.getWorld().equals(playerLoc.getWorld())) {
+            if (isShown) {
+              corpse.hide(player);
             }
-        }, 20, 2);
-    }
+            continue;
+          } else if (!holoLoc.getWorld()
+              .isChunkLoaded(holoLoc.getBlockX() >> 4, holoLoc.getBlockZ() >> 4) && isShown) {
+            corpse.hide(player);
+            continue;
+          }
+          boolean inRange = holoLoc.distanceSquared(playerLoc) <= this.spawnDistance;
 
-    @NotNull
-    public Optional<Corpse> getCorpse(int entityId) {
-        return Optional.ofNullable(this.corpseMap.get(entityId));
-    }
-
-    @NotNull
-    public Optional<Corpse> getCorpse(String name) {
-        return this.getCorpses()
-                .stream()
-                .filter(corpse -> corpse.getName().equals(name))
-                .findFirst();
-    }
-
-    public void remove(int entityId) {
-        this.getCorpse(entityId).ifPresent(corpse -> {
-            this.corpseMap.remove(entityId);
-            corpse.getSeeingPlayers()
-                    .forEach(corpse::hide);
-        });
-    }
-
-    public int getFreeEntityId() {
-        int id;
-
-        do {
-            id = RANDOM.nextInt(Integer.MAX_VALUE);
-        } while (this.corpseMap.containsKey(id));
-
-        return id;
-    }
-
-    @NotNull
-    public Collection<Corpse> getCorpses() {
-        return Collections.unmodifiableCollection(this.corpseMap.values());
-    }
-
-    public void takeCareOf(@NotNull Corpse corpse) {
-        // Prevent two corpses with same name and showTags is enabled
-        if(this.showTags) {
-            this.getCorpse(corpse.getName()).ifPresent(c -> {
-                this.corpseMap.remove(c.getId());
-                c.getSeeingPlayers()
-                        .forEach(c::hide);
-            });
+          if (!inRange && isShown) {
+            corpse.hide(player);
+          } else if (inRange && !isShown) {
+            corpse.show(player);
+          }
         }
-        this.corpseMap.put(corpse.getId(), corpse);
+      }
+    }, 20, 2);
+  }
+
+  @NotNull
+  public Optional<Corpse> getCorpse(int entityId) {
+    return Optional.ofNullable(this.corpseMap.get(entityId));
+  }
+
+  @NotNull
+  public Optional<Corpse> getCorpse(String name) {
+    return this.getCorpses()
+        .stream()
+        .filter(corpse -> corpse.getName().equals(name))
+        .findFirst();
+  }
+
+  public void remove(int entityId) {
+    this.getCorpse(entityId).ifPresent(corpse -> {
+      this.corpseMap.remove(entityId);
+      corpse.getSeeingPlayers()
+          .forEach(corpse::hide);
+    });
+  }
+
+  public int getFreeEntityId() {
+    int id;
+
+    do {
+      id = RANDOM.nextInt(Integer.MAX_VALUE);
+    } while (this.corpseMap.containsKey(id));
+
+    return id;
+  }
+
+  @NotNull
+  public Collection<Corpse> getCorpses() {
+    return Collections.unmodifiableCollection(this.corpseMap.values());
+  }
+
+  public void takeCareOf(@NotNull Corpse corpse) {
+    // Prevent two corpses with same name and showTags is enabled
+    if (this.showTags) {
+      this.getCorpse(corpse.getName()).ifPresent(c -> {
+        this.corpseMap.remove(c.getId());
+        c.getSeeingPlayers()
+            .forEach(c::hide);
+      });
     }
+    this.corpseMap.put(corpse.getId(), corpse);
+  }
 
-    public int getTimeRemove() {
-        return timeRemove;
+  public int getTimeRemove() {
+    return timeRemove;
+  }
+
+  public boolean isRenderArmor() {
+    return renderArmor;
+  }
+
+  public boolean isShowTags() {
+    return showTags;
+  }
+
+  @Nullable
+  public BukkitTask getTickTask() {
+    return tickTask;
+  }
+
+  @EventHandler
+  public void handleQuit(PlayerQuitEvent event) {
+    Player player = event.getPlayer();
+
+    this.corpseMap.values().stream()
+        .filter(corpse -> corpse.isShownFor(player))
+        .forEach(corpse -> corpse.hide(player));
+  }
+
+  @EventHandler
+  public void handleRespawn(PlayerRespawnEvent event) {
+    Player player = event.getPlayer();
+
+    this.corpseMap.values().stream()
+        .filter(corpse -> corpse.isShownFor(player))
+        .forEach(corpse -> corpse.hide(player));
+  }
+
+  @EventHandler
+  public void handleDeath(PlayerDeathEvent event) {
+    //Fix player death message disappear
+//        event.setDeathMessage(null);
+    if (onDeath) {
+      new Corpse(event.getEntity());
     }
-
-    public boolean isRenderArmor() {
-        return renderArmor;
-    }
-
-    public boolean isShowTags() {
-        return showTags;
-    }
-
-    @Nullable
-    public BukkitTask getTickTask() {
-        return tickTask;
-    }
-
-    @EventHandler
-    public void handleQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-
-        this.corpseMap.values().stream()
-                .filter(corpse -> corpse.isShownFor(player))
-                .forEach(corpse -> corpse.hide(player));
-    }
-
-    @EventHandler
-    public void handleRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
-
-        this.corpseMap.values().stream()
-                .filter(corpse -> corpse.isShownFor(player))
-                .forEach(corpse -> corpse.hide(player));
-    }
-
-
-    @EventHandler
-    public void handleDeath(PlayerDeathEvent event) {
-        event.setDeathMessage(null);
-        if(onDeath) {
-            new Corpse(event.getEntity());
-        }
-    }
-
-    @NotNull
-    public static synchronized CorpsePool getInstance() {
-        if(instance == null) {
-            instance = new CorpsePool();
-        }
-        return instance;
-    }
+  }
 }

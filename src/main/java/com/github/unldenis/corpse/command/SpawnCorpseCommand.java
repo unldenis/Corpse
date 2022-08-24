@@ -28,30 +28,32 @@ import org.jetbrains.annotations.*;
 
 public class SpawnCorpseCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        if(sender instanceof Player) {
-            Player player = (Player) sender;
-            if(player.hasPermission("corpses.spawn")) {
-                if(args.length==0) {
-                    new Corpse(player);
-                    player.sendMessage(ChatColor.GREEN+"Corpse created");
-                    return true;
-                }else if(args.length==1) {
-                    OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
-                    if(target.isOnline()) {
-                        CorpseAPI.getInstance().spawnCorpse((Player) target, player.getLocation());
-                    } else {
-                        new Corpse(player.getLocation(), target, null);
-                    }
-                    player.sendMessage(ChatColor.GREEN+"Corpse created");
-                    return true;
-                }
-                sender.sendMessage(ChatColor.RED+"/spawncorpse [Player] - Spawns a corpse of a player if the name is given else it just spawns a corpse of yourself.");
-            }
-        } else {
-            sender.sendMessage(ChatColor.RED+"Only players can run this command");
+  @Override
+  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
+      @NotNull String label, @NotNull String[] args) {
+    if (sender instanceof Player) {
+      Player player = (Player) sender;
+      if (player.hasPermission("corpses.spawn")) {
+        if (args.length == 0) {
+          new Corpse(player);
+          player.sendMessage(ChatColor.GREEN + "Corpse created");
+          return true;
+        } else if (args.length == 1) {
+          OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+          if (target.isOnline()) {
+            CorpseAPI.getInstance().spawnCorpse((Player) target, player.getLocation());
+          } else {
+            new Corpse(player.getLocation(), target, null);
+          }
+          player.sendMessage(ChatColor.GREEN + "Corpse created");
+          return true;
         }
-        return false;
+        sender.sendMessage(ChatColor.RED
+            + "/spawncorpse [Player] - Spawns a corpse of a player if the name is given else it just spawns a corpse of yourself.");
+      }
+    } else {
+      sender.sendMessage(ChatColor.RED + "Only players can run this command");
     }
+    return false;
+  }
 }
