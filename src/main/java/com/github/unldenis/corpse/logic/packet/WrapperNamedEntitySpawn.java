@@ -22,6 +22,7 @@ import com.comphenix.protocol.*;
 import com.comphenix.protocol.events.*;
 import com.github.unldenis.corpse.util.*;
 import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -41,8 +42,13 @@ public class WrapperNamedEntitySpawn implements IPacket {
 
   @Override
   public void load() {
-    packet = ProtocolLibrary.getProtocolManager()
-        .createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+    if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_19)) {
+        packet = ProtocolLibrary.getProtocolManager()
+            .createPacket(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+    } else {
+        packet = ProtocolLibrary.getProtocolManager()
+            .createPacket(PacketType.Play.Server.SPAWN_ENTITY);
+    }
 
         /*
             Unknown reason
@@ -51,15 +57,15 @@ public class WrapperNamedEntitySpawn implements IPacket {
         */
 
     if (VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_8)) {
-      packet.getModifier().writeDefaults();
-      packet.getIntegers().
-          write(0, this.id).
-          write(1, (int) (this.location.getX() * 32)).
-          write(2, (int) (this.location.getY() * 32)).
-          write(3, (int) (this.location.getZ() * 32));
+        packet.getModifier().writeDefaults();
+        packet.getIntegers().
+            write(0, this.id).
+            write(1, (int) (this.location.getX() * 32)).
+            write(2, (int) (this.location.getY() * 32)).
+            write(3, (int) (this.location.getZ() * 32));
 
-      packet.getUUIDs()
-          .write(0, this.uuid);
+        packet.getUUIDs()
+            .write(0, this.uuid);
     } else {
       packet.getIntegers()
           .write(0, this.id);
@@ -72,6 +78,10 @@ public class WrapperNamedEntitySpawn implements IPacket {
       packet.getBytes()
           .write(0, (byte) (this.location.getYaw() * 256.0F / 360.0F))
           .write(1, (byte) (this.location.getPitch() * 256.0F / 360.0F));
+      if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_20)) {
+          packet.getEntityTypeModifier()
+              .write(0, EntityType.PLAYER);
+      }
     }
 
   }

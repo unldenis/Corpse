@@ -22,6 +22,10 @@ import com.comphenix.protocol.*;
 import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.wrappers.*;
 import com.github.unldenis.corpse.util.*;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+import java.util.Objects;
 
 public class WrapperEntityMetadata implements IPacket {
 
@@ -34,11 +38,10 @@ public class WrapperEntityMetadata implements IPacket {
 
   @Override
   public void load() {
-    packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-    packet.getIntegers().write(0, this.id);
-    WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-    if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
+      packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+      packet.getIntegers().write(0, this.id);
+      WrappedDataWatcher watcher = new WrappedDataWatcher();
+      if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
       WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(
           6, WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()));
       watcher.setObject(visible, EnumWrappers.EntityPose.SLEEPING.toNms());
@@ -47,14 +50,30 @@ public class WrapperEntityMetadata implements IPacket {
             WrappedDataWatcher.WrappedDataWatcherObject bed = new WrappedDataWatcher.WrappedDataWatcherObject(14, WrappedDataWatcher.Registry.getBlockPositionSerializer(true));
             watcher.setObject(bed, Optional.of(BlockPosition.getConverter().getGeneric(new BlockPosition(corpse.location.toVector()))));
              */
-      int indexSkinLayer = VersionUtil.isAbove(VersionUtil.VersionEnum.V1_17) ? 17 : 16;
-      WrappedDataWatcher.WrappedDataWatcherObject skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(
-          indexSkinLayer, WrappedDataWatcher.Registry.get(Byte.class));
-      watcher.setObject(skinLayers, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
+          int indexSkinLayer = VersionUtil.isAbove(VersionUtil.VersionEnum.V1_17) ? 17 : 16;
+          WrappedDataWatcher.WrappedDataWatcherObject skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(
+              indexSkinLayer, WrappedDataWatcher.Registry.get(Byte.class));
+          if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_20)) {
+              final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+              watcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
+                  final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
+                  wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+              });
+              wrappedDataValueList.add(new WrappedDataValue(skinLayers.getIndex(), skinLayers.getSerializer(),
+                  (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80)));
+              packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+          } else {
+              watcher.setObject(skinLayers, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
+              packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+          }
+
+
+
     } else {
       watcher.setObject(10, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
+      packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
     }
-    packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+
   }
 
   @Override
