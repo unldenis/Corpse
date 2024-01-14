@@ -142,7 +142,8 @@ public class Corpse {
   @ApiStatus.Internal
   public void hide(@NotNull Player player) {
     sendPackets(player, this.packetLoader.getWrapperEntityDestroy().get());
-    if (!this.pool.isShowTags()) {
+    if (!this.pool.isShowTags()
+            && /*fix: multiple corpse with same name */ !pool.existCorpseWithName(this.name)) {
       showNameTag(player);
     }
     this.seeingPlayers.remove(player);

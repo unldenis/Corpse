@@ -74,6 +74,15 @@ public class CorpsePool implements Listener {
     return instance;
   }
 
+  public boolean existCorpseWithName(@NotNull String name) {
+    for(Corpse c: corpseMap.values()) {
+      if(c.getName().equals(name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private void corpseTick() {
     tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
       for (Player player : ImmutableList.copyOf(Bukkit.getOnlinePlayers())) {
@@ -195,4 +204,6 @@ public class CorpsePool implements Listener {
       new Corpse(event.getEntity());
     }
   }
+
+
 }

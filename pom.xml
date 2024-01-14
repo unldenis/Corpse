@@ -6,7 +6,7 @@
 
     <groupId>com.github.unldenis.corpse</groupId>
     <artifactId>Corpse</artifactId>
-    <version>1.0.10</version>
+    <version>1.0.11</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -58,6 +58,17 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <outputDirectory>C:\Users\mehil\OneDrive\Desktop\spigot 1.20.2\plugins</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
 
     </build>
 </project>
