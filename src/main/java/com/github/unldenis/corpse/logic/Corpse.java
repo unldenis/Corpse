@@ -174,11 +174,7 @@ public class Corpse {
 
   private void sendPackets(Player player, PacketContainer... packets) {
     for (PacketContainer packet : packets) {
-      try {
         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-      }
     }
   }
 

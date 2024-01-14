@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0</version>
+            <version>5.1.0</version>
             <scope>provided</scope>
         </dependency>
         <!--This adds the Spigot API artifact to the build -->

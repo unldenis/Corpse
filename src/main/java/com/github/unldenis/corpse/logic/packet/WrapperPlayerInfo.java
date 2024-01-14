@@ -21,6 +21,8 @@ package com.github.unldenis.corpse.logic.packet;
 import com.comphenix.protocol.*;
 import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.wrappers.*;
+import com.github.unldenis.corpse.util.VersionUtil;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -41,18 +43,31 @@ public class WrapperPlayerInfo implements IPacket {
 
   @Override
   public void load() {
-    packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-    packet.getPlayerInfoAction()
-        .write(0, this.add ? EnumWrappers.PlayerInfoAction.ADD_PLAYER
-            : EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
-    PlayerInfoData data = new PlayerInfoData(this.gameProfile, 1,
-        EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(this.name));
-    List<PlayerInfoData> dataList = new ArrayList<PlayerInfoData>();
-    dataList.add(data);
+      PlayerInfoData data = new PlayerInfoData(this.gameProfile, 1,
+          EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(this.name));
+      List<PlayerInfoData> dataList = new ArrayList<PlayerInfoData>();
+      dataList.add(data);
+      if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_19)) {
+          packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+          packet.getPlayerInfoAction()
+              .write(0, this.add ? EnumWrappers.PlayerInfoAction.ADD_PLAYER
+                  : EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+          packet.getPlayerInfoDataLists()
+              .write(0, dataList);
+      } else {
 
-    packet.getPlayerInfoDataLists()
-        .write(0, dataList);
+          if (this.add) {
+              packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+              packet.getPlayerInfoActions()
+                  .write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.ADD_PLAYER));
+              packet.getPlayerInfoDataLists()
+                  .write(1, dataList);
+          } else {
+              packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_INFO_REMOVE);
+              packet.getUUIDLists().write(0, Collections.singletonList(this.gameProfile.getUUID()));
+          }
+      }
   }
 
   @Override
