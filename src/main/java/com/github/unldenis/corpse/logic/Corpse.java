@@ -106,14 +106,18 @@ public class Corpse {
   public void show(@NotNull Player player) {
     this.seeingPlayers.add(player);
 
+    // hide name tag if option disabled
     if (!this.pool.isShowTags()) {
       hideNameTag(player);
     }
+
+    // spawn and set sleep
     sendPackets(player,
         this.packetLoader.getWrapperPlayerInfoAdd().get(),
         this.packetLoader.getWrapperNamedEntitySpawn().get(),
         this.packetLoader.getWrapperEntityMetadata().get()); // Set sleep
 
+    // if version below 1.12
     if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_12)) {
       player.sendBlockChange(BedUtil.getBedLocation(location), Material.valueOf("BED_BLOCK"),
           (byte) BedUtil.yawToFacing(location.getYaw()));
@@ -123,6 +127,7 @@ public class Corpse {
               .get());  // Set the correct height of the player lying down
     }
 
+    // show armor
     if (armor) {
       sendPackets(player, this.packetLoader.getWrapperEntityEquipment().getMore());
     }

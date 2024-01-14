@@ -29,6 +29,9 @@ import java.util.Objects;
 
 public class WrapperEntityMetadata implements IPacket {
 
+  private static final byte FLAGS =
+          (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80);
+
   private final int id;
   private PacketContainer packet;
 
@@ -40,16 +43,13 @@ public class WrapperEntityMetadata implements IPacket {
   public void load() {
       packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
       packet.getIntegers().write(0, this.id);
+
       WrappedDataWatcher watcher = new WrappedDataWatcher();
       if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_13)) {
-      WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(
-          6, WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()));
-      watcher.setObject(visible, EnumWrappers.EntityPose.SLEEPING.toNms());
-            /*
-            //Works and set location a little higher
-            WrappedDataWatcher.WrappedDataWatcherObject bed = new WrappedDataWatcher.WrappedDataWatcherObject(14, WrappedDataWatcher.Registry.getBlockPositionSerializer(true));
-            watcher.setObject(bed, Optional.of(BlockPosition.getConverter().getGeneric(new BlockPosition(corpse.location.toVector()))));
-             */
+          WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(
+              6, WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()));
+          watcher.setObject(visible, EnumWrappers.EntityPose.SLEEPING.toNms());
+
           int indexSkinLayer = VersionUtil.isAbove(VersionUtil.VersionEnum.V1_17) ? 17 : 16;
           WrappedDataWatcher.WrappedDataWatcherObject skinLayers = new WrappedDataWatcher.WrappedDataWatcherObject(
               indexSkinLayer, WrappedDataWatcher.Registry.get(Byte.class));
@@ -59,20 +59,16 @@ public class WrapperEntityMetadata implements IPacket {
                   final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
                   wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
               });
-              wrappedDataValueList.add(new WrappedDataValue(skinLayers.getIndex(), skinLayers.getSerializer(),
-                  (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80)));
+              wrappedDataValueList.add(new WrappedDataValue(skinLayers.getIndex(), skinLayers.getSerializer(), FLAGS));
               packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
           } else {
-              watcher.setObject(skinLayers, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
+              watcher.setObject(skinLayers, FLAGS);
               packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
           }
-
-
-
-    } else {
-      watcher.setObject(10, (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80));
-      packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
-    }
+      } else {
+          watcher.setObject(10, FLAGS);
+          packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
+      }
 
   }
 
