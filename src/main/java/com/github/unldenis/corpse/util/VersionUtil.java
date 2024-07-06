@@ -51,6 +51,10 @@ public class VersionUtil {
     return isAbove(ve1) && isBelow(ve2);
   }
 
+  public static boolean isAbovePatch(@NotNull VersionEnum veFull) {
+    return VersionEnum.valueOf(VERSION.toUpperCase()).getOrder() >= veFull.getOrder();
+  }
+
 
   public enum VersionEnum {
 
@@ -66,7 +70,13 @@ public class VersionUtil {
     V1_17(10),
     V1_18(11),
     V1_19(12),
-    V1_20(13);
+    V1_20(13),
+    V1_20_R1(14),
+    V1_20_R2(15),
+    V1_20_R3(16),
+    V1_20_R4(17),
+    V1_20_R5(18),
+    V1_20_R6(19);
 
     private final int order;
 

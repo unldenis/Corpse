@@ -75,9 +75,27 @@ public class WrapperNamedEntitySpawn implements IPacket {
           .write(0, this.location.getX())
           .write(1, this.location.getY())
           .write(2, this.location.getZ());
-      packet.getBytes()
-          .write(0, (byte) (this.location.getYaw() * 256.0F / 360.0F))
-          .write(1, (byte) (this.location.getPitch() * 256.0F / 360.0F));
+
+      if (VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_20) && VersionUtil.isAbovePatch(VersionUtil.VersionEnum.V1_20_R2)) {
+        float legacyYaw = this.location.getYaw();
+        float patchedYaw;
+        if (legacyYaw < 0) {
+          patchedYaw = 360 + legacyYaw;
+        } else {
+          patchedYaw = legacyYaw;
+        }
+
+        packet.getBytes()
+                .write(0, (byte) (this.location.getPitch() * 256.0F / 360.0F))  //headPitch
+                .write(1, (byte) (192.0F - patchedYaw * 256.0F / 360.0F))  //bodyYaw
+                .write(2, (byte) (192.0F - this.location.getYaw() * 256.0F / 360.0F));  //headYaw
+
+      } else {
+        packet.getBytes()
+                .write(0, (byte) (this.location.getYaw() * 256.0F / 360.0F))
+                .write(1, (byte) (this.location.getPitch() * 256.0F / 360.0F));
+      }
+
       if (VersionUtil.isAbove(VersionUtil.VersionEnum.V1_20)) {
           packet.getEntityTypeModifier()
               .write(0, EntityType.PLAYER);
