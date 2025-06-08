@@ -19,15 +19,25 @@
 package com.github.unldenis.corpse;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListener;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.unldenis.corpse.command.*;
 import com.github.unldenis.corpse.data.*;
 import com.github.unldenis.corpse.corpse.*;
+import com.github.unldenis.corpse.event.AsyncCorpseInteractEvent;
 import com.github.unldenis.corpse.manager.*;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.*;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.*;
 import org.bukkit.scheduler.*;
 import org.jetbrains.annotations.*;
+
+import java.util.Optional;
 
 
 public class CorpsePlugin extends JavaPlugin {
@@ -44,9 +54,42 @@ public class CorpsePlugin extends JavaPlugin {
 
   @Override
   public void onLoad() {
+    //Initialize PacketEvents API
     PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
     //On Bukkit, calling this here is essential, hence the name "load"
-    PacketEvents.getAPI().load();;
+    PacketEvents.getAPI().load();
+
+    /* We will register our packet listeners in the onLoad method */
+    PacketEvents.getAPI().getEventManager().registerListener(new PacketListener() {
+      @Override
+      public void onPacketReceive(PacketReceiveEvent event) {
+        if(event.getPacketType() != PacketType.Play.Client.INTERACT_ENTITY) {
+          return;
+        }
+
+        Player player = event.getPlayer();
+        if (player == null) {
+          return;
+        }
+
+        if(pool == null) {
+          // If the pool is not initialized, we cannot proceed
+          return;
+        }
+
+        // Create a packet wrapper for the received packet
+        WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
+
+        // Check if the interaction is with a corpse
+        Corpse corpse = pool.getCorpse(packet.getEntityId()).orElse(null);
+        if(corpse == null) {
+          return;
+        }
+
+        // Call the custom event asynchronously
+        Bukkit.getPluginManager().callEvent(new AsyncCorpseInteractEvent(player, corpse, packet.getAction()));
+      }
+    }, PacketListenerPriority.NORMAL);
   }
 
   @Override

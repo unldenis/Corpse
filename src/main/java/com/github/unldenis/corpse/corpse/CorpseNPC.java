@@ -53,7 +53,7 @@ class CorpseNPC {
     private ItemStack boots = null;
     private final Set<Object> channels = new HashSet<>();
 
-    CorpseNPC(UserProfile profile, int entityId, @Nullable  WrapperPlayServerTeams.NameTagVisibility nameTagVisibility, GameMode gamemode, @Nullable Component tabName, @Nullable NamedTextColor nameColor,
+    private CorpseNPC(UserProfile profile, int entityId, @Nullable  WrapperPlayServerTeams.NameTagVisibility nameTagVisibility, GameMode gamemode, @Nullable Component tabName, @Nullable NamedTextColor nameColor,
                      @Nullable Component prefixName, @Nullable Component suffixName) {
         this.profile = profile;
         this.id = entityId;
@@ -68,7 +68,7 @@ class CorpseNPC {
         this.teamName = "npc-" + id;
     }
 
-    CorpseNPC(UserProfile profile, int entityId, @Nullable  WrapperPlayServerTeams.NameTagVisibility nameTagVisibility, @Nullable Component tabName) {
+    private CorpseNPC(UserProfile profile, int entityId, @Nullable  WrapperPlayServerTeams.NameTagVisibility nameTagVisibility, @Nullable Component tabName) {
         this(profile, entityId, nameTagVisibility, GameMode.SURVIVAL, tabName, null, null, null);
     }
 

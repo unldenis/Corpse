@@ -56,7 +56,6 @@ public class Corpse {
 
     private CorpseNPC internalNPC;
     private boolean hasArmor = false;
-    protected ItemStack[] armorContents;
 
     @ApiStatus.Internal
     public Corpse(
@@ -76,15 +75,15 @@ public class Corpse {
 
         internalNPC.setLocation(SpigotConversionUtil.fromBukkitLocation(location));
         if (pool.isRenderArmor() && armorContents != null) {
-            this.armorContents = armorContents.clone();
-            if (this.armorContents[0] != null)
-                internalNPC.setHelmet(SpigotConversionUtil.fromBukkitItemStack(this.armorContents[0]));
-            if (this.armorContents[1] != null)
-                internalNPC.setChestplate(SpigotConversionUtil.fromBukkitItemStack(this.armorContents[1]));
-            if (this.armorContents[2] != null)
-                internalNPC.setLeggings(SpigotConversionUtil.fromBukkitItemStack(this.armorContents[2]));
-            if (this.armorContents[3] != null)
-                internalNPC.setBoots(SpigotConversionUtil.fromBukkitItemStack(this.armorContents[3]));
+            if (armorContents[0] != null)
+                internalNPC.setBoots(SpigotConversionUtil.fromBukkitItemStack(armorContents[0]));
+            if (armorContents[1] != null)
+                internalNPC.setLeggings(SpigotConversionUtil.fromBukkitItemStack(armorContents[1]));
+            if (armorContents[2] != null)
+                internalNPC.setChestplate(SpigotConversionUtil.fromBukkitItemStack(armorContents[2]));
+            if (armorContents[3] != null)
+                internalNPC.setHelmet(SpigotConversionUtil.fromBukkitItemStack(armorContents[3]));
+
             hasArmor = true;
         }
 
@@ -143,6 +142,7 @@ public class Corpse {
         // show armor
         if (hasArmor) {
             internalNPC.updateEquipment(channel);
+            CorpsePlugin.getInstance().getLogger().info("Sent updateEquipment packet with helmet " + internalNPC.getHelmet());
         }
 
     }

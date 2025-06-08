@@ -18,8 +18,10 @@
 
 package com.github.unldenis.corpse.manager;
 
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.unldenis.corpse.*;
 import com.github.unldenis.corpse.corpse.*;
+import com.github.unldenis.corpse.event.AsyncCorpseInteractEvent;
 import com.google.common.collect.*;
 import org.bukkit.*;
 import org.bukkit.configuration.file.*;
@@ -65,6 +67,7 @@ public class CorpsePool implements Listener {
     Bukkit.getPluginManager().registerEvents(this, plugin);
     this.corpseTick();
   }
+
 
   @NotNull
   public static synchronized CorpsePool getInstance() {
@@ -205,5 +208,15 @@ public class CorpsePool implements Listener {
     }
   }
 
+  @EventHandler
+  public void onCorpseInteract(AsyncCorpseInteractEvent event) {
+    if(event.getAction() == WrapperPlayClientInteractEntity.InteractAction.INTERACT ||
+       event.getAction() == WrapperPlayClientInteractEntity.InteractAction.INTERACT_AT) {
+      Player player = event.getPlayer();
+      Corpse corpse = event.getCorpse();
+
+      player.sendMessage(ChatColor.GREEN + "You interacted with the corpse of " + corpse.getName());
+    }
+  }
 
 }
