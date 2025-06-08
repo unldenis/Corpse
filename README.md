@@ -3,7 +3,6 @@
 Dead bodies in minecraft for 1.8-1.20.x servers.
 ## Installation
 1. Put the jar in the plugins folder.
-2. The plugin ProtocolLib is required on your server.
 2. Reboot your server. Do not use /reload
 ## Developer Api
 ```java
