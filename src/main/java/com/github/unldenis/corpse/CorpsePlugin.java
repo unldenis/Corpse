@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.unldenis.corpse.command.*;
 import com.github.unldenis.corpse.data.*;
@@ -55,7 +56,7 @@ public class CorpsePlugin extends JavaPlugin {
   @Override
   public void onLoad() {
     //Initialize PacketEvents API
-    PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+    PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this, new PacketEventsSettings().checkForUpdates(false)));
     //On Bukkit, calling this here is essential, hence the name "load"
     PacketEvents.getAPI().load();
 

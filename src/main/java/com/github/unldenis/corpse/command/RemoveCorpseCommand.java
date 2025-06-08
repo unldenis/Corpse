@@ -18,6 +18,7 @@
 
 package com.github.unldenis.corpse.command;
 
+import com.github.unldenis.corpse.corpse.Corpse;
 import com.github.unldenis.corpse.manager.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
@@ -39,16 +40,14 @@ public class RemoveCorpseCommand implements CommandExecutor {
             double radius = Math.pow(Double.parseDouble(args[0]), 2);
 
             CorpsePool pool = CorpsePool.getInstance();
-            AtomicInteger count = new AtomicInteger(0);
-            pool.getCorpses()
-                .stream()
-                .filter(
-                    corpse -> corpse.getLocation().distanceSquared(player.getLocation()) <= radius)
-                .forEach(corpse -> {
-                  pool.remove(corpse.getId());
-                  count.incrementAndGet();
-                });
-            player.sendMessage("(" + count.get() + ") " + ChatColor.GREEN + "Corpses deleted");
+            int count = 0;
+            for (Corpse corpse : pool.getCorpses()) {
+              if (corpse.getLocation().distanceSquared(player.getLocation()) <= radius) {
+                pool.remove(corpse.getId());
+                count++;
+              }
+            }
+            player.sendMessage("(" + count + ") " + ChatColor.GREEN + "Corpses deleted");
             return true;
           } catch (NumberFormatException e) {
             player.sendMessage(ChatColor.RED + "Radius must be a number");

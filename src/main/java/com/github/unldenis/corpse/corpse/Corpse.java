@@ -25,8 +25,10 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUseBed;
 import com.github.unldenis.corpse.CorpsePlugin;
 import com.github.unldenis.corpse.manager.CorpsePool;
 import com.github.unldenis.corpse.util.BedUtil;
@@ -54,8 +56,8 @@ public class Corpse {
     private final Collection<Player> seeingPlayers = new CopyOnWriteArraySet<>();
     private final CorpsePool pool;
 
-    private CorpseNPC internalNPC;
-    private boolean hasArmor = false;
+    private final CorpseNPC internalNPC;
+    private final boolean hasArmor;
 
     @ApiStatus.Internal
     public Corpse(
@@ -85,6 +87,8 @@ public class Corpse {
                 internalNPC.setHelmet(SpigotConversionUtil.fromBukkitItemStack(armorContents[3]));
 
             hasArmor = true;
+        } else {
+            hasArmor = false;
         }
 
         //pool take care
@@ -126,6 +130,8 @@ public class Corpse {
 
             player.sendBlockChange(BedUtil.getBedLocation(location), Material.valueOf("BED_BLOCK"),
                     (byte) BedUtil.yawToFacing(location.getYaw()));
+            WrapperPlayServerUseBed packet = new WrapperPlayServerUseBed(id, new Vector3i(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+            PacketEvents.getAPI().getProtocolManager().sendPacket(channel, packet);
 //                sendPackets(player,
 //                        this.packetLoader.getWrapperBed().get(),
 //                        this.packetLoader.getWrapperEntityTeleport()

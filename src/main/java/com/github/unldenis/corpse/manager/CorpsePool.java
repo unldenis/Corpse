@@ -29,6 +29,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.*;
 import org.jetbrains.annotations.*;
 
@@ -47,7 +48,7 @@ public class CorpsePool implements Listener {
   private final boolean onDeath;
   private final boolean showTags;
   private final boolean renderArmor;
-
+  private final boolean lootableCorpses;
 
   private final Map<Integer, Corpse> corpseMap = new ConcurrentHashMap<>();
 
@@ -63,6 +64,7 @@ public class CorpsePool implements Listener {
     this.onDeath = config.getBoolean("on-death");
     this.showTags = config.getBoolean("show-tags");
     this.renderArmor = config.getBoolean("render-armor");
+    this.lootableCorpses = config.getBoolean("lootable-corpses");
 
     Bukkit.getPluginManager().registerEvents(this, plugin);
     this.corpseTick();
@@ -203,9 +205,24 @@ public class CorpsePool implements Listener {
   public void handleDeath(PlayerDeathEvent event) {
     //Fix player death message disappear
 //        event.setDeathMessage(null);
-    if (onDeath) {
-      new Corpse(event.getEntity());
+
+    if(onDeath) {
+      Player player = event.getEntity();
+
+      if(lootableCorpses) {
+        List<ItemStack> drops = new ArrayList<>(event.getDrops());
+
+        // clear event drops
+        event.getDrops().clear();
+
+        new LootableCorpse(player.getLocation(), player, drops);
+
+      } else {
+        new Corpse(player);
+      }
     }
+
+
   }
 
   @EventHandler
@@ -215,7 +232,12 @@ public class CorpsePool implements Listener {
       Player player = event.getPlayer();
       Corpse corpse = event.getCorpse();
 
-      player.sendMessage(ChatColor.GREEN + "You interacted with the corpse of " + corpse.getName());
+
+      if(corpse instanceof LootableCorpse) {
+        LootableCorpse lootableCorpse = (LootableCorpse) corpse;
+
+        Bukkit.getScheduler().runTask(CorpsePlugin.getInstance(), () -> lootableCorpse.open(player));
+      }
     }
   }
 

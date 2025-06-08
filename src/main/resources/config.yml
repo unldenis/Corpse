@@ -12,3 +12,6 @@ render-armor: true
 
 ## Maximum distance for rendering corps
 corpse-distance: 60
+
+## Lootable corpses
+lootable-corpses: true
