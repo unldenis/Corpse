@@ -20,7 +20,7 @@ package com.github.unldenis.corpse.command;
 
 
 import com.github.unldenis.corpse.api.*;
-import com.github.unldenis.corpse.logic.*;
+import com.github.unldenis.corpse.corpse.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;

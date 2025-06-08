@@ -18,9 +18,9 @@
 
 package com.github.unldenis.corpse.api;
 
-import com.comphenix.protocol.wrappers.*;
-import com.github.unldenis.corpse.logic.*;
+import com.github.unldenis.corpse.corpse.*;
 import com.github.unldenis.corpse.manager.*;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.apache.commons.lang.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -71,7 +71,7 @@ public class CorpseAPI {
   public Corpse spawnCorpse(@NotNull Player player, @NotNull Location location) {
     Validate.notNull(player, "Player cannot be null");
     Validate.notNull(location, "Spawn location cannot be null");
-    return new Corpse(location, WrappedGameProfile.fromPlayer(player), null, player.getName());
+    return new Corpse(location, player, null);
   }
 
   /**
@@ -108,7 +108,7 @@ public class CorpseAPI {
   ) {
     Validate.notNull(player, "Player cannot be null");
     Validate.notNull(location, "Spawn location cannot be null");
-    return new Corpse(location, WrappedGameProfile.fromPlayer(player),
+    return new Corpse(location, SpigotReflectionUtil.getUserProfile(player),
         new ItemStack[]{boots, leggings, chestPlate, helmet}, player.getName());
   }
 

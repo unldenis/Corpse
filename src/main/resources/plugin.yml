@@ -1,9 +1,8 @@
 name: ${project.artifactId}
 version: ${project.version}
 api-version: "1.13"
-depend: [ProtocolLib]
 author: unldenis
-main: com.github.unldenis.corpse.CorpseP
+main: com.github.unldenis.corpse.CorpsePlugin
 commands:
   spawncorpse:
   removecorpse:

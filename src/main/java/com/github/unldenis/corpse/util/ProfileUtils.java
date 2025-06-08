@@ -32,7 +32,7 @@ public class ProfileUtils {
    */
   @NotNull
   public static String randomName() {
-    return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
   }
 
 }

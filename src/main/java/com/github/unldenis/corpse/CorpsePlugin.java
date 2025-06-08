@@ -18,31 +18,43 @@
 
 package com.github.unldenis.corpse;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.unldenis.corpse.command.*;
 import com.github.unldenis.corpse.data.*;
-import com.github.unldenis.corpse.logic.*;
+import com.github.unldenis.corpse.corpse.*;
 import com.github.unldenis.corpse.manager.*;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.configuration.file.*;
 import org.bukkit.plugin.java.*;
 import org.bukkit.scheduler.*;
 import org.jetbrains.annotations.*;
 
 
-public class CorpseP extends JavaPlugin {
+public class CorpsePlugin extends JavaPlugin {
 
-  private static CorpseP instance;
+  private static CorpsePlugin instance;
 
   private DataManager configYml;
   private CorpsePool pool;
 
   @NotNull
-  public static CorpseP getInstance() {
+  public static CorpsePlugin getInstance() {
     return instance;
   }
 
   @Override
+  public void onLoad() {
+    PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+    //On Bukkit, calling this here is essential, hence the name "load"
+    PacketEvents.getAPI().load();;
+  }
+
+  @Override
   public void onEnable() {
-    CorpseP.instance = this;
+    //Initialize!
+    PacketEvents.getAPI().init();
+
+    CorpsePlugin.instance = this;
 
     //register commands
     this.getCommand("spawncorpse").setExecutor(new SpawnCorpseCommand());
@@ -65,6 +77,9 @@ public class CorpseP extends JavaPlugin {
       c.getSeeingPlayers()
           .forEach(c::hide);
     }
+
+    //Terminate the instance (clean up process)
+    PacketEvents.getAPI().terminate();
   }
 
   @NotNull

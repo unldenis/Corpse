@@ -19,7 +19,7 @@
 package com.github.unldenis.corpse.manager;
 
 import com.github.unldenis.corpse.*;
-import com.github.unldenis.corpse.logic.*;
+import com.github.unldenis.corpse.corpse.*;
 import com.google.common.collect.*;
 import org.bukkit.*;
 import org.bukkit.configuration.file.*;
@@ -37,7 +37,7 @@ public class CorpsePool implements Listener {
 
   private static final Random RANDOM = new Random();
   private static CorpsePool instance;
-  private final CorpseP plugin;
+  private final CorpsePlugin plugin;
 
   //config options
   private final double spawnDistance;
@@ -53,7 +53,7 @@ public class CorpsePool implements Listener {
 
   @ApiStatus.Internal
   private CorpsePool() {
-    this.plugin = CorpseP.getInstance();
+    this.plugin = CorpsePlugin.getInstance();
 
     FileConfiguration config = plugin.getConfigYml();
     this.spawnDistance = Math.pow(config.getInt("corpse-distance"), 2);
