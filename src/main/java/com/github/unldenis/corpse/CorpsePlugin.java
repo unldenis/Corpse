@@ -113,17 +113,19 @@ public class CorpsePlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    BukkitTask task = pool.getTickTask();
-    if (task != null) {
-      task.cancel();
+    if(pool != null) {
+      BukkitTask task = pool.getTickTask();
+      if (task != null) {
+        task.cancel();
+      }
+      for (Corpse c : pool.getCorpses()) {
+        c.getSeeingPlayers()
+            .forEach(c::hide);
+      }
     }
-    for (Corpse c : pool.getCorpses()) {
-      c.getSeeingPlayers()
-          .forEach(c::hide);
+    if(PacketEvents.getAPI() != null) {
+      PacketEvents.getAPI().terminate();
     }
-
-    //Terminate the instance (clean up process)
-    PacketEvents.getAPI().terminate();
   }
 
   @NotNull
