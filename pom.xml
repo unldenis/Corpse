@@ -13,7 +13,6 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-
     <repositories>
         <!-- This adds the Spigot Maven repository to the build -->
         <repository>
@@ -53,8 +52,8 @@
         <dependency>
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-spigot</artifactId>
-            <version>2.10.1</version>
-<!--            <scope>provided</scope>-->
+            <version>2.11.2</version>
+            <!-- <scope>compile</scope> -->
         </dependency>
     </dependencies>
 
@@ -69,12 +68,11 @@
             </resource>
         </resources>
 
-        <plugins>
+        <plugins>      
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.2</version>
-
+                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -82,29 +80,31 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <!-- <minimizeJar>false</minimizeJar> -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>false</minimizeJar>
-
                             <relocations>
                                 <relocation>
-                                    <pattern>io.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>com.github.unldenis.corpse.external.packetevents</shadedPattern>
+                                    <pattern>com.github.retrooper</pattern>
+                                    <shadedPattern>com.github.unldenis.corpse.libs.packetevents</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.github.retrooper</pattern>
+                                    <shadedPattern>com.github.unldenis.corpse.libs.packetevents</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.kyori</pattern>
+                                    <shadedPattern>com.github.unldenis.corpse.libs.kyori</shadedPattern>
+                                </relocation>
+                                <!-- <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>com.github.unldenis.corpse.libs.gson</shadedPattern>
+                                </relocation> -->
                             </relocations>
-
-                            <artifactSet>
-                                <includes>
-                                    <include>com.github.retrooper:packetevents-spigot</include>
-                                    <!-- include more dependencies here if needed -->
-                                </includes>
-                            </artifactSet>
-
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-        </plugins>
+        </plugins>  
 
     </build>
 </project>
