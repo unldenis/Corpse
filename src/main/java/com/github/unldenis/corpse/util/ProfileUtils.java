@@ -25,10 +25,9 @@ import java.util.*;
 public class ProfileUtils {
 
   /**
-   * Creates a random name which is exactly 16 chars long and only contains alphabetic and numeric
-   * chars.
+   * Creates a random name which is exactly 10 chars long and only contains hexadecimal chars.
    *
-   * @return a randomly created minecraft name.
+   * @return a randomly created minecraft-compatible name.
    */
   @NotNull
   public static String randomName() {

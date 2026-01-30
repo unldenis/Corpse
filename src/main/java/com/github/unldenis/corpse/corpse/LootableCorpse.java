@@ -1,8 +1,8 @@
 package com.github.unldenis.corpse.corpse;
 
+import com.github.unldenis.corpse.CorpsePlugin;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -26,12 +26,12 @@ public class LootableCorpse extends Corpse {
 
     public void open(Player player) {
         if(opened) {
-            player.sendMessage( ChatColor.RED + "Corpse already looted");
+            player.sendMessage(CorpsePlugin.getInstance().getMessages().getCorpseAlreadyLooted());
             return;
         }
         opened = true;
 
-        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.GOLD + "Loot");
+        Inventory inventory = Bukkit.createInventory(null, 54, CorpsePlugin.getInstance().getMessages().getLootInventoryTitle());
         for (int i = 0; i < items.size() && i < inventory.getSize(); i++) {
             inventory.setItem(i, items.get(i));
         }

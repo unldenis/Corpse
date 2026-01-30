@@ -47,6 +47,8 @@ public class CorpsePlugin extends JavaPlugin {
   private static CorpsePlugin instance;
 
   private DataManager configYml;
+  private DataManager messagesData;
+  private Messages messages;
   private CorpsePool pool;
 
   @NotNull
@@ -107,6 +109,8 @@ public class CorpsePlugin extends JavaPlugin {
 
     //load config
     configYml = new DataManager(this, "config.yml");
+    messagesData = new DataManager(this, "messages.yml");
+    messages = new Messages(messagesData);
 
     //load instance
     pool = CorpsePool.getInstance();
@@ -132,5 +136,10 @@ public class CorpsePlugin extends JavaPlugin {
   @NotNull
   public FileConfiguration getConfigYml() {
     return configYml.getConfig();
+  }
+
+  @NotNull
+  public Messages getMessages() {
+    return messages;
   }
 }

@@ -18,6 +18,7 @@
 
 package com.github.unldenis.corpse.command;
 
+import com.github.unldenis.corpse.CorpsePlugin;
 import com.github.unldenis.corpse.corpse.Corpse;
 import com.github.unldenis.corpse.pool.*;
 
@@ -25,6 +26,9 @@ import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RemoveCorpseCommand implements CommandExecutor {
@@ -34,31 +38,35 @@ public class RemoveCorpseCommand implements CommandExecutor {
       @NotNull String label, @NotNull String[] args) {
     if (sender instanceof Player) {
       Player player = (Player) sender;
-      if (player.hasPermission("corpses.remove")) {
-        if (args.length == 1) {
+      if (!player.hasPermission("corpses.remove")) {
+        sender.sendMessage(CorpsePlugin.getInstance().getMessages().getNoPermission());
+        return true;
+      }
+      if (args.length == 1) {
           try {
             double radius = Math.pow(Double.parseDouble(args[0]), 2);
 
             CorpsePool pool = CorpsePool.getInstance();
-            int count = 0;
+            List<Integer> toRemove = new ArrayList<>();
             for (Corpse corpse : pool.getCorpses()) {
-              if (corpse.getLocation().distanceSquared(player.getLocation()) <= radius) {
-                pool.remove(corpse.getId());
-                count++;
+              if (corpse.getLocation().getWorld().equals(player.getWorld())
+                  && corpse.getLocation().distanceSquared(player.getLocation()) <= radius) {
+                toRemove.add(corpse.getId());
               }
             }
-            player.sendMessage("(" + count + ") " + ChatColor.GREEN + "Corpses deleted");
+            for (Integer id : toRemove) {
+              pool.remove(id);
+            }
+            player.sendMessage(CorpsePlugin.getInstance().getMessages().getCorpsesDeleted(toRemove.size()));
             return true;
           } catch (NumberFormatException e) {
-            player.sendMessage(ChatColor.RED + "Radius must be a number");
+            player.sendMessage(CorpsePlugin.getInstance().getMessages().getRadiusNotNumber());
           }
           return true;
         }
-        sender.sendMessage(
-            ChatColor.RED + "/removecorpse [radius] - Removes any coprse(s) in a radius of you.");
-      }
+        sender.sendMessage(CorpsePlugin.getInstance().getMessages().getRemovecorpseUsage());
     } else {
-      sender.sendMessage(ChatColor.RED + "Only players can run this command");
+      sender.sendMessage(CorpsePlugin.getInstance().getMessages().getPlayersOnly());
     }
 
     return false;

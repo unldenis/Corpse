@@ -19,6 +19,7 @@
 package com.github.unldenis.corpse.command;
 
 
+import com.github.unldenis.corpse.CorpsePlugin;
 import com.github.unldenis.corpse.corpse.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
@@ -32,10 +33,13 @@ public class SpawnCorpseCommand implements CommandExecutor {
       @NotNull String label, @NotNull String[] args) {
     if (sender instanceof Player) {
       Player player = (Player) sender;
-      if (player.hasPermission("corpses.spawn")) {
-        if (args.length == 0) {
+      if (!player.hasPermission("corpses.spawn")) {
+        sender.sendMessage(CorpsePlugin.getInstance().getMessages().getNoPermission());
+        return true;
+      }
+      if (args.length == 0) {
           Corpse.fromPlayer(player).spawn();
-          player.sendMessage(ChatColor.GREEN + "Corpse created");
+          player.sendMessage(CorpsePlugin.getInstance().getMessages().getCorpseCreated());
           return true;
         } else if (args.length == 1) {
           OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
@@ -44,14 +48,12 @@ public class SpawnCorpseCommand implements CommandExecutor {
           } else {
             Corpse.fromLocation(player.getLocation()).name(target.getName()).spawn();
           }
-          player.sendMessage(ChatColor.GREEN + "Corpse created");
+          player.sendMessage(CorpsePlugin.getInstance().getMessages().getCorpseCreated());
           return true;
         }
-        sender.sendMessage(ChatColor.RED
-            + "/spawncorpse [Player] - Spawns a corpse of a player if the name is given else it just spawns a corpse of yourself.");
-      }
+        sender.sendMessage(CorpsePlugin.getInstance().getMessages().getSpawncorpseUsage());
     } else {
-      sender.sendMessage(ChatColor.RED + "Only players can run this command");
+      sender.sendMessage(CorpsePlugin.getInstance().getMessages().getPlayersOnly());
     }
     return false;
   }
