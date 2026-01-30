@@ -1,92 +1,50 @@
 # Corpse
-[![](https://jitpack.io/v/unldenis/Corpse.svg)](https://jitpack.io/#unldenis/Corpse)<br>
-Dead bodies in minecraft for 1.8-1.20.x servers.
+
+[![](https://jitpack.io/v/unldenis/Corpse.svg)](https://jitpack.io/#unldenis/Corpse)
+
+Dead bodies in minecraft for 1.8-1.21.11 servers.
+
 ## Installation
-1. Put the jar in the plugins folder.
-2. Reboot your server. Do not use /reload
-## Developer Api
+
+1. Drop the jar into `plugins`.
+2. Restart the server (no `/reload`).
+
+## Commands
+
+| Command | Permission | Description |
+|--------|------------|-------------|
+| `/spawncorpse [player]` | `corpses.spawn` | Spawns your corpse at your feet, or another player’s if you give a name. |
+| `/removecorpse <radius>` | `corpses.remove` | Removes all corpses within the given radius. |
+
+## Config (`config.yml`)
+
+- `corpse-time` – Seconds before a corpse despawns (-1 = never).
+- `on-death` – Spawn a corpse when a player dies.
+- `show-tags` – Show name tags above corpses.
+- `render-armor` – Render armor/items on the corpse.
+- `corpse-distance` – Max blocks at which corpses are visible.
+- `lootable-corpses` – Right‑click to open inventory and loot.
+
+## API
+
+Add the dependency (e.g. JitPack) and use `CorpseAPI.getInstance()`:
+
 ```java
-public class CorpseAPI {
+CorpseAPI api = CorpseAPI.getInstance();
 
-  /**
-   * Class method that allows you to use the API.
-   *
-   * @return an instance of this class
-   */
-  @NotNull
-  public static synchronized CorpseAPI getInstance();
+// At player location, with their skin and inventory
+Corpse corpse = api.spawnCorpse(player);
 
-  /**
-   * Method that creates a corpse in the player's position and with its skin and inventory
-   *
-   * @return a new Corpse object
-   */
-  public Corpse spawnCorpse(@NotNull Player player);
+// At a specific location
+Corpse corpse = api.spawnCorpse(player, location);
+Corpse corpse = api.spawnCorpse(offlinePlayer, location);
 
-  /**
-   * Method that creates a corpse in the given place and with the skin, name and inventory of the
-   * player
-   *
-   * @param location The location where to spawn the corpse
-   * @return a new Corpse object
-   */
-  public Corpse spawnCorpse(@NotNull Player player, @NotNull Location location);
+// Custom armor (player/offline + location + helmet, chestplate, leggings, boots)
+Corpse corpse = api.spawnCorpse(player, location, helmet, chestPlate, leggings, boots);
+Corpse corpse = api.spawnCorpse(offlinePlayer, location, helmet, chestPlate, leggings, boots);
 
-  /**
-   * Method that creates a corpse in the given place and with the skin and name of the
-   * offlinePlayer
-   *
-   * @param location      The location where to spawn the corpse
-   * @return a new Corpse object
-   */
-  public Corpse spawnCorpse(@NotNull OfflinePlayer offlinePlayer, @NotNull Location location);
-
-  /**
-   * Method that creates a corpse in the given place and with the skin and name of the player with a
-   * custom inventory.
-   *
-   * @param location   The location where to spawn the corpse
-   * @param helmet     The helmet to put on the corpse
-   * @param chestPlate The chestPlate to put on the corpse
-   * @param leggings   The leggings to put on the corpse
-   * @param boots      The boots to put on the corpse
-   * @return a new Corpse object
-   */
-  public Corpse spawnCorpse(
-      @NotNull Player player,
-      @NotNull Location location,
-      @Nullable ItemStack helmet,
-      @Nullable ItemStack chestPlate,
-      @Nullable ItemStack leggings,
-      @Nullable ItemStack boots
-  );
-
-  /**
-   * Method that creates a corpse in the given place and with the skin and name of the offlinePlayer
-   * with a custom inventory.
-   *
-   * @param location      The location where to spawn the corpse
-   * @param helmet        The helmet to put on the corpse
-   * @param chestPlate    The chestPlate to put on the corpse
-   * @param leggings      The leggings to put on the corpse
-   * @param boots         The boots to put on the corpse
-   * @return a new Corpse object
-   */
-  public Corpse spawnCorpse(
-      @NotNull OfflinePlayer offlinePlayer,
-      @NotNull Location location,
-      @Nullable ItemStack helmet,
-      @Nullable ItemStack chestPlate,
-      @Nullable ItemStack leggings,
-      @Nullable ItemStack boots
-  );
-
-  /**
-   * Method that removes a corpse
-   *
-   * @param corpse The corpse to be removed
-   */
-  public void removeCorpse(@NotNull Corpse corpse);
-}
-
+// Remove a corpse
+api.removeCorpse(corpse);
 ```
+
+Listen for right‑clicks (and attack) on corpses via `AsyncCorpseInteractEvent`; use `getAction()` to tell interact vs attack.
