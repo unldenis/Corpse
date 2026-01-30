@@ -1,6 +1,6 @@
 # Corpse
 
-[![](https://jitpack.io/v/unldenis/Corpse.svg)](https://jitpack.io/#unldenis/Corpse)
+[![](https://jitpack.io/v/denmeh/Corpse.svg)](https://jitpack.io/#denmeh/Corpse)
 
 Dead bodies in minecraft for 1.8-1.21.11 servers.
 

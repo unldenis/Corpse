@@ -1,7 +1,7 @@
 name: ${project.artifactId}
 version: ${project.version}
 api-version: "1.13"
-author: unldenis
+author: denmeh
 main: com.github.unldenis.corpse.CorpsePlugin
 softdepend:
   - ProtocolLib
