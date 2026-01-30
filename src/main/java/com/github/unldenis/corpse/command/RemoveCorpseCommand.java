@@ -25,7 +25,6 @@ import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.*;
 
-import java.util.concurrent.atomic.*;
 
 public class RemoveCorpseCommand implements CommandExecutor {
 

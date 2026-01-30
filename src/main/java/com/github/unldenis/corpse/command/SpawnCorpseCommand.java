@@ -19,7 +19,6 @@
 package com.github.unldenis.corpse.command;
 
 
-import com.github.unldenis.corpse.api.*;
 import com.github.unldenis.corpse.corpse.*;
 import org.bukkit.*;
 import org.bukkit.command.*;
@@ -35,15 +34,15 @@ public class SpawnCorpseCommand implements CommandExecutor {
       Player player = (Player) sender;
       if (player.hasPermission("corpses.spawn")) {
         if (args.length == 0) {
-          new Corpse(player);
+          Corpse.fromPlayer(player).spawn();
           player.sendMessage(ChatColor.GREEN + "Corpse created");
           return true;
         } else if (args.length == 1) {
           OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
           if (target.isOnline()) {
-            CorpseAPI.getInstance().spawnCorpse((Player) target, player.getLocation());
+            Corpse.fromPlayer((Player) target).location(player.getLocation()).spawn();
           } else {
-            new Corpse(player.getLocation(), target, null);
+            Corpse.fromLocation(player.getLocation()).name(target.getName()).spawn();
           }
           player.sendMessage(ChatColor.GREEN + "Corpse created");
           return true;
