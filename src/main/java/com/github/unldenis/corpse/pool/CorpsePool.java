@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.unldenis.corpse.manager;
+package com.github.unldenis.corpse.pool;
 
+import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.unldenis.corpse.*;
 import com.github.unldenis.corpse.corpse.*;
@@ -49,7 +50,8 @@ public class CorpsePool implements Listener {
   private final boolean showTags;
   private final boolean renderArmor;
   private final boolean lootableCorpses;
-
+  private final EntityPose entityPose;
+  
   private final Map<Integer, Corpse> corpseMap = new ConcurrentHashMap<>();
 
   private BukkitTask tickTask;
@@ -66,6 +68,14 @@ public class CorpsePool implements Listener {
     this.renderArmor = config.getBoolean("render-armor");
     this.lootableCorpses = config.getBoolean("lootable-corpses");
 
+    // get entity pose
+    String entityPoseString = config.getString("entity-pose");
+    if (entityPoseString == null) {
+      this.entityPose = EntityPose.SLEEPING;
+    } else {
+      this.entityPose = EntityPose.valueOf(entityPoseString.toUpperCase());
+    }
+    
     Bukkit.getPluginManager().registerEvents(this, plugin);
     this.corpseTick();
   }
@@ -176,6 +186,10 @@ public class CorpsePool implements Listener {
 
   public boolean isShowTags() {
     return showTags;
+  }
+
+  public EntityPose getEntityPose() {
+    return entityPose;
   }
 
   @Nullable

@@ -24,12 +24,16 @@ Dead bodies in minecraft for 1.8-1.21.11 servers.
 - `render-armor` – Render armor/items on the corpse.
 - `corpse-distance` – Max blocks at which corpses are visible.
 - `lootable-corpses` – Right‑click to open inventory and loot.
+- `entity-pose` – Pose used for the corpse entity (`SLEEPING` or `SWIMMING`).
 
 ## API
 
 Add the dependency (e.g. JitPack) and use the **builder API** via `Corpse.fromPlayer()` or `Corpse.fromLocation()`:
 
 ```java
+import com.github.unldenis.corpse.corpse.Corpse;
+import com.github.unldenis.corpse.model.CorpseArmor;
+
 // At player location, with their skin and armor
 Corpse corpse = Corpse.fromPlayer(player).spawn();
 
@@ -37,10 +41,10 @@ Corpse corpse = Corpse.fromPlayer(player).spawn();
 Corpse corpse = Corpse.fromPlayer(player).location(location).spawn();
 Corpse corpse = Corpse.fromLocation(location).name(offlinePlayer.getName()).spawn();
 
-// Custom armor (array order: boots, leggings, chestplate, helmet)
-ItemStack[] armor = new ItemStack[]{boots, leggings, chestPlate, helmet};
-Corpse corpse = Corpse.fromPlayer(player).location(location).armorContents(armor).spawn();
-Corpse corpse = Corpse.fromLocation(location).name(name).armorContents(armor).spawn();
+// Custom armor (use CorpseArmor)
+CorpseArmor armor = new CorpseArmor().boots(boots).leggings(leggings).chestplate(chestplate).helmet(helmet);
+Corpse corpse = Corpse.fromPlayer(player).location(location).armor(armor).spawn();
+Corpse corpse = Corpse.fromLocation(location).name(name).armor(armor).spawn();
 
 // Remove a corpse
 corpse.destroy();

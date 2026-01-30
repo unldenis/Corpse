@@ -30,7 +30,8 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUseBed;
 import com.github.unldenis.corpse.CorpsePlugin;
-import com.github.unldenis.corpse.manager.CorpsePool;
+import com.github.unldenis.corpse.model.CorpseArmor;
+import com.github.unldenis.corpse.pool.CorpsePool;
 import com.github.unldenis.corpse.util.BedUtil;
 import com.github.unldenis.corpse.util.ProfileUtils;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
@@ -83,7 +84,7 @@ public class Corpse {
     Corpse(
             @NotNull Location location,
             @NotNull List<TextureProperty> textures,
-            @Nullable ItemStack[] armorContents,
+            @Nullable CorpseArmor armor,
             @Nullable String name
     ) {
         pool = CorpsePool.getInstance();
@@ -92,20 +93,16 @@ public class Corpse {
         this.location = location;
         this.profile = new UserProfile(UUID.randomUUID(), name != null ? name : ProfileUtils.randomName(), textures);
 
+        // create npc
         internalNPC = new CorpseNPC(profile, id,
                 pool.isShowTags() ? null : WrapperPlayServerTeams.NameTagVisibility.NEVER);
 
+        // set npc location
         internalNPC.setLocation(SpigotConversionUtil.fromBukkitLocation(location));
-        if (pool.isRenderArmor() && armorContents != null) {
-            if (armorContents[0] != null)
-                internalNPC.setBoots(SpigotConversionUtil.fromBukkitItemStack(armorContents[0]));
-            if (armorContents[1] != null)
-                internalNPC.setLeggings(SpigotConversionUtil.fromBukkitItemStack(armorContents[1]));
-            if (armorContents[2] != null)
-                internalNPC.setChestplate(SpigotConversionUtil.fromBukkitItemStack(armorContents[2]));
-            if (armorContents[3] != null)
-                internalNPC.setHelmet(SpigotConversionUtil.fromBukkitItemStack(armorContents[3]));
 
+        // set npc armor
+        if (pool.isRenderArmor() && armor != null) {
+            this.setArmor(armor);
             hasArmor = true;
         } else {
             hasArmor = false;
@@ -148,7 +145,7 @@ public class Corpse {
 
         } else {
             List<EntityData<?>> entityData = new ArrayList<>();
-            entityData.add(new EntityData<>(6, EntityDataTypes.ENTITY_POSE, EntityPose.SLEEPING));
+            entityData.add(new EntityData<>(6, EntityDataTypes.ENTITY_POSE, pool.getEntityPose()));
             WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(id, entityData);
             PacketEvents.getAPI().getProtocolManager().sendPacket(channel, packet);
         }
@@ -181,23 +178,53 @@ public class Corpse {
         CorpsePool.getInstance().remove(this.id);
     }
 
+    /**
+     * Gets the entity id of the corpse.
+     * @return The entity id of the corpse.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Gets the name of the corpse.
+     * @return The name of the corpse.
+     */
     @NotNull
     public String getName() {
         return profile.getName();
     }
 
+    /**
+     * Gets the location of the corpse.
+     * @return The location of the corpse.
+     */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the players that are seeing the corpse.
+     * @return The players that are seeing the corpse.
+     */
     @NotNull
     public Collection<Player> getSeeingPlayers() {
         return Collections.unmodifiableCollection(this.seeingPlayers);
     }
 
+    /**
+     * Sets the armor of the corpse.
+     * @param armor The armor to set.
+     */
+    private void setArmor(@NotNull CorpseArmor armor) {
+        if (armor.getBoots() != null)
+            internalNPC.setBoots(SpigotConversionUtil.fromBukkitItemStack(armor.getBoots()));
+        if (armor.getLeggings() != null)
+            internalNPC.setLeggings(SpigotConversionUtil.fromBukkitItemStack(armor.getLeggings()));
+        if (armor.getChestplate() != null)
+            internalNPC.setChestplate(SpigotConversionUtil.fromBukkitItemStack(armor.getChestplate()));
+        if (armor.getHelmet() != null)
+            internalNPC.setHelmet(SpigotConversionUtil.fromBukkitItemStack(armor.getHelmet()));
+    }
 }

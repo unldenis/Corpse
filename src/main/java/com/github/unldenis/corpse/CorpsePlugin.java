@@ -26,10 +26,11 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.github.unldenis.corpse.command.*;
-import com.github.unldenis.corpse.data.*;
+import com.github.unldenis.corpse.config.*;
 import com.github.unldenis.corpse.corpse.*;
 import com.github.unldenis.corpse.event.AsyncCorpseInteractEvent;
-import com.github.unldenis.corpse.manager.*;
+import com.github.unldenis.corpse.pool.*;
+
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.*;
