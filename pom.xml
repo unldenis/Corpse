@@ -6,7 +6,7 @@
 
     <groupId>com.github.unldenis.corpse</groupId>
     <artifactId>Corpse</artifactId>
-    <version>2.1.1</version>
+    <version>3.0.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
