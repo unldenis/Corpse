@@ -10,8 +10,9 @@ import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import com.github.unldenis.corpse.model.CorpseArmor;
 
 /**
  * Builder for creating a Corpse object.
@@ -20,7 +21,7 @@ public class CorpseBuilder {
 
     private Location location;
     private List<TextureProperty> textures = new ArrayList<>();
-    private ItemStack[] armorContents = null;
+    private CorpseArmor armor = null;
     private String name = null;
 
     /**
@@ -30,7 +31,7 @@ public class CorpseBuilder {
     CorpseBuilder(@NotNull Player player) {
         this.location = player.getLocation();
         this.textures = SpigotReflectionUtil.getUserProfile(player);
-        this.armorContents = player.getInventory().getArmorContents();
+        this.armor = new CorpseArmor(player);
         this.name = player.getName();
     }
 
@@ -63,12 +64,12 @@ public class CorpseBuilder {
     }
 
     /**
-     * Set the armor of the corpse. Order: boots, leggings, chestplate, helmet.
-     * @param armorContents The armor contents to set.
+     * Set the armor of the corpse.
+     * @param armor The armor to set.
      * @return This builder.
      */
-    public CorpseBuilder armorContents(@NotNull ItemStack[] armorContents) {
-        this.armorContents = armorContents;
+    public CorpseBuilder armor(@NotNull CorpseArmor armor) {
+        this.armor = armor;
         return this;
     }
 
@@ -87,6 +88,6 @@ public class CorpseBuilder {
      * @return The spawned Corpse instance.
      */
     public Corpse spawn() {
-        return new Corpse(location, textures, armorContents, name);
+        return new Corpse(location, textures, armor, name);
     }
 }

@@ -19,7 +19,8 @@
 package com.github.unldenis.corpse.command;
 
 import com.github.unldenis.corpse.corpse.Corpse;
-import com.github.unldenis.corpse.manager.*;
+import com.github.unldenis.corpse.pool.*;
+
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;

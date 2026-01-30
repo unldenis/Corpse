@@ -15,3 +15,7 @@ corpse-distance: 60
 
 ## Lootable corpses
 lootable-corpses: true
+
+## Entity Pose to use for the corpses.
+## Possible values: SLEEPING, SWIMMING
+entity-pose: "SLEEPING"
