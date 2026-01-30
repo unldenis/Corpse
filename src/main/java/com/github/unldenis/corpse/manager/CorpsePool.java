@@ -218,7 +218,7 @@ public class CorpsePool implements Listener {
         new LootableCorpse(player.getLocation(), player, drops);
 
       } else {
-        new Corpse(player);
+        Corpse.fromPlayer(player).spawn();
       }
     }
 

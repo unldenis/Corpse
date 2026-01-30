@@ -1,6 +1,6 @@
 # Corpse
 
-[![](https://jitpack.io/v/unldenis/Corpse.svg)](https://jitpack.io/#unldenis/Corpse)
+[![](https://jitpack.io/v/denmeh/Corpse.svg)](https://jitpack.io/#denmeh/Corpse)
 
 Dead bodies in minecraft for 1.8-1.21.11 servers.
 
@@ -27,24 +27,23 @@ Dead bodies in minecraft for 1.8-1.21.11 servers.
 
 ## API
 
-Add the dependency (e.g. JitPack) and use `CorpseAPI.getInstance()`:
+Add the dependency (e.g. JitPack) and use the **builder API** via `Corpse.fromPlayer()` or `Corpse.fromLocation()`:
 
 ```java
-CorpseAPI api = CorpseAPI.getInstance();
-
-// At player location, with their skin and inventory
-Corpse corpse = api.spawnCorpse(player);
+// At player location, with their skin and armor
+Corpse corpse = Corpse.fromPlayer(player).spawn();
 
 // At a specific location
-Corpse corpse = api.spawnCorpse(player, location);
-Corpse corpse = api.spawnCorpse(offlinePlayer, location);
+Corpse corpse = Corpse.fromPlayer(player).location(location).spawn();
+Corpse corpse = Corpse.fromLocation(location).name(offlinePlayer.getName()).spawn();
 
-// Custom armor (player/offline + location + helmet, chestplate, leggings, boots)
-Corpse corpse = api.spawnCorpse(player, location, helmet, chestPlate, leggings, boots);
-Corpse corpse = api.spawnCorpse(offlinePlayer, location, helmet, chestPlate, leggings, boots);
+// Custom armor (array order: boots, leggings, chestplate, helmet)
+ItemStack[] armor = new ItemStack[]{boots, leggings, chestPlate, helmet};
+Corpse corpse = Corpse.fromPlayer(player).location(location).armorContents(armor).spawn();
+Corpse corpse = Corpse.fromLocation(location).name(name).armorContents(armor).spawn();
 
 // Remove a corpse
-api.removeCorpse(corpse);
+corpse.destroy();
 ```
 
-Listen for right‑clicks (and attack) on corpses via `AsyncCorpseInteractEvent`; use `getAction()` to tell interact vs attack.
+The builder also supports `.textures(List<TextureProperty>)` for custom skins. Listen for right‑clicks and attacks on corpses via `AsyncCorpseInteractEvent`; use `getAction()` to distinguish interact vs attack.

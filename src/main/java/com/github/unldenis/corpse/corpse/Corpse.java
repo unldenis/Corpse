@@ -34,11 +34,9 @@ import com.github.unldenis.corpse.manager.CorpsePool;
 import com.github.unldenis.corpse.util.BedUtil;
 import com.github.unldenis.corpse.util.ProfileUtils;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -48,7 +46,30 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * Corpse class that represents a dead body.
+ * To create a Corpse, use fromPlayer, fromLocation methods.
+ */
 public class Corpse {
+
+
+    /**
+     * Create a CorpseBuilder from a player.
+     * @param player The player to create the CorpseBuilder for.
+     * @return A CorpseBuilder object.
+     */
+    public static CorpseBuilder fromPlayer(@NotNull Player player) {
+        return new CorpseBuilder(player);
+    }
+
+    /**
+     * Create a CorpseBuilder from a location.
+     * @param location The location to create the CorpseBuilder for.
+     * @return A CorpseBuilder object.
+     */
+    public static CorpseBuilder fromLocation(@NotNull Location location) {
+        return new CorpseBuilder(location);
+    }
 
     protected final int id;
     protected final Location location;
@@ -59,8 +80,7 @@ public class Corpse {
     private final CorpseNPC internalNPC;
     private final boolean hasArmor;
 
-    @ApiStatus.Internal
-    public Corpse(
+    Corpse(
             @NotNull Location location,
             @NotNull List<TextureProperty> textures,
             @Nullable ItemStack[] armorContents,
@@ -104,18 +124,6 @@ public class Corpse {
 
     }
 
-    public Corpse(@NotNull Player player) {
-        this(player.getLocation(), SpigotReflectionUtil.getUserProfile(player), player.getInventory().getArmorContents(), player.getName());
-    }
-
-    public Corpse(
-            @NotNull Location location,
-            @NotNull OfflinePlayer offlinePlayer,
-            @Nullable ItemStack[] armorContents
-    ) {
-        this(location, new ArrayList<>(), armorContents, offlinePlayer.getName());
-    }
-
     @ApiStatus.Internal
     public void show(@NotNull Player player) {
         this.seeingPlayers.add(player);
@@ -148,7 +156,6 @@ public class Corpse {
         // show armor
         if (hasArmor) {
             internalNPC.updateEquipment(channel);
-            CorpsePlugin.getInstance().getLogger().info("Sent updateEquipment packet with helmet " + internalNPC.getHelmet());
         }
 
     }
@@ -165,6 +172,13 @@ public class Corpse {
 
     public boolean isShownFor(@NotNull Player player) {
         return this.seeingPlayers.contains(player);
+    }
+
+    /**
+     * Removes this corpse from the world.
+     */
+    public void destroy() {
+        CorpsePool.getInstance().remove(this.id);
     }
 
     public int getId() {
